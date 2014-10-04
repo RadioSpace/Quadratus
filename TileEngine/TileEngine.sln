@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quadrum", "Quadrum\Quadrum.csproj", "{70CE184C-E5CB-46A4-A0CE-2CA695D985A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuadrumCreoMuto", "QuadrumCreoMuto\QuadrumCreoMuto.csproj", "{014009DE-C65C-43D3-9CED-9DD855D0D9F6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lab", "Lab", "{BCA965D1-414F-467B-A290-331048D88312}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestRun", "TestRun\TestRun.csproj", "{97AF9F98-ABB0-45B2-8799-1D72821E0539}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandCastle", "SandCastle\SandCastle.csproj", "{ED28D708-C468-42FA-A035-848A5C220E45}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{70CE184C-E5CB-46A4-A0CE-2CA695D985A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70CE184C-E5CB-46A4-A0CE-2CA695D985A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70CE184C-E5CB-46A4-A0CE-2CA695D985A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70CE184C-E5CB-46A4-A0CE-2CA695D985A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{014009DE-C65C-43D3-9CED-9DD855D0D9F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{014009DE-C65C-43D3-9CED-9DD855D0D9F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{014009DE-C65C-43D3-9CED-9DD855D0D9F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{014009DE-C65C-43D3-9CED-9DD855D0D9F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97AF9F98-ABB0-45B2-8799-1D72821E0539}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97AF9F98-ABB0-45B2-8799-1D72821E0539}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97AF9F98-ABB0-45B2-8799-1D72821E0539}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97AF9F98-ABB0-45B2-8799-1D72821E0539}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED28D708-C468-42FA-A035-848A5C220E45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED28D708-C468-42FA-A035-848A5C220E45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED28D708-C468-42FA-A035-848A5C220E45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED28D708-C468-42FA-A035-848A5C220E45}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{97AF9F98-ABB0-45B2-8799-1D72821E0539} = {BCA965D1-414F-467B-A290-331048D88312}
+		{ED28D708-C468-42FA-A035-848A5C220E45} = {BCA965D1-414F-467B-A290-331048D88312}
+	EndGlobalSection
+EndGlobal

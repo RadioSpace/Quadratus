@@ -1,0 +1,16 @@
+﻿Quadrum: a square
+Creo: to create
+Muto: to change
+
+
+this is the application that is the Tile Map Editor
+
+in addition to editing tile maps. It will allow you to create,save, and edit Tiles
+
+these Tiles will be Available to the map editor for placement 
+
+Tiles are made of Properties, Composite Texture ID and a Texture Index.
+
+a composite texture is made in the map editor as well (it could be it's own program but it is used so closly with the map editor we will include it there)
+
+a composite texture is comprised of 2 files(for now) one is the rendered image and the other is the data the quads use to find the internal texture for rendering
