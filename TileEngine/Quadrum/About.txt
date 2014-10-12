@@ -1,1 +1,4 @@
 ﻿
+Quadrum is:
+the Main Library used by winforms and WPF and the main game shell for rendering tracking editing and playing a Quadratus Game Engine Game
+
