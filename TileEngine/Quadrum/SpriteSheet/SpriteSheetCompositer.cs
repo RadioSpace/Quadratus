@@ -151,7 +151,7 @@ namespace Quadrum.SpriteSheet
 
                 DataSpriteCollection tdc = new DataSpriteCollection(Path.GetFileName(outputpath), _u, _v, tdata);
                 DataSpriteCollection.WriteCollection(outputpath, tdc);
-
+                
                 string outputtexpath = Path.GetDirectoryName(outputpath) + "\\" + Path.GetFileNameWithoutExtension(outputpath) + ".png";//png right?
 
                 gd.ResetTargets();

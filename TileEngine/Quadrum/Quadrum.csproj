@@ -50,7 +50,15 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gob.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Map\Cell.cs" />
+    <Compile Include="Map\CellManager.cs" />
+    <Compile Include="Map\CellProperty.cs" />
+    <Compile Include="Map\Grid.cs" />
+    <Compile Include="Map\Map.cs" />
+    <Compile Include="Map\MapRenderer.cs" />
+    <Compile Include="Renderer.cs" />
     <Compile Include="SerilizableVector.cs" />
     <Compile Include="SpriteSheet\TileTarget.cs" />
     <Compile Include="SpriteSheet\DataComposited.cs" />
@@ -66,7 +74,6 @@
   <ItemGroup>
     <Folder Include="BaseData\" />
     <Folder Include="GameShell\" />
-    <Folder Include="Map\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

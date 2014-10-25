@@ -71,7 +71,9 @@
     <Compile Include="CreoMuto.Designer.cs">
       <DependentUpon>CreoMuto.cs</DependentUpon>
     </Compile>
+    <Compile Include="MapDisplay\MapViewer.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="CreoMuto.resx">
       <DependentUpon>CreoMuto.cs</DependentUpon>

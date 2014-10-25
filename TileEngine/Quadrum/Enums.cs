@@ -27,4 +27,12 @@ namespace Quadrum
         /// </summary>
         Pixel = 8
     };
+
+    
+    public enum CellMemberEvents 
+    { 
+        
+        EnterCell, 
+        LeaveCell 
+    };
 }
