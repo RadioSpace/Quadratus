@@ -26,10 +26,11 @@ namespace Quadrum.Map
 
         public void AddMember(ICellMember member )
         {
-            members( new CellMemberEventArgs(member));
 
 
+            members.Add(new CellMemberEventArgs(member));
 
+                
         }
 
 
@@ -37,16 +38,7 @@ namespace Quadrum.Map
 
         public void RemoveMember(ICellMember member)
         {
-            if (members.Select(a => a.member).Contains(member))
-            {
-                MemberSubscription membersub = members[
-
-
-                member[] -= EnterCell;
-                member[events] -= LeaveCell;
-
-                members.Remove(member);
-            }
+           
         }
 
 
@@ -83,6 +75,12 @@ namespace Quadrum.Map
         //we will make more of these
         event EventHandler<CellEventArgs> Updated;
         protected virtual void OnUpdated(CellEventArgs e) { if (Updated != null)Updated(this, e); }
+
+
+        bool memberexists(ICellMember member)
+        { 
+            return 
+        }
                
     }
 
