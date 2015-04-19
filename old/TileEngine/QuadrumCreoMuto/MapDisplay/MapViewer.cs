@@ -14,10 +14,10 @@ namespace QuadrumCreoMuto.MapDisplay
 
     class MapViewer 
     {
-        
 
 
-        public MapViewer() : base()
+
+        public MapViewer() : base() { }
 
     }
 }

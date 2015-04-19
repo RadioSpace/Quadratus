@@ -26,7 +26,7 @@ namespace Quadrum.Map
             mapsheet = SpriteSheet.SpriteSheet.Load( MapSheetPath);
             if (mapsheet.Name == "FAILED")
             {
-                throw new Exception("Loading the prite sheet failed");                
+                throw new Exception("Loading the sprite sheet failed");                
             }
             
             mapgrid = mgrid;

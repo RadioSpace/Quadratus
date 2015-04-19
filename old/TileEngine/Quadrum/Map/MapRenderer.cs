@@ -72,9 +72,15 @@ namespace Quadrum.Map
 
         void PrepareForDraw(DeviceContext context)
         { 
+
+            //Todo:  fill this in
+
+
+
             //set index buffer
 
-            context.InputAssembler.
+            
+            //context.InputAssembler.
 
             //set spritesheet 
             //set sprite data (tex coords of each individual texture in the sheet)

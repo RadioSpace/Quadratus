@@ -9,9 +9,9 @@ namespace Quadrum.Map
     //use this to help build dynamic expressions
     public abstract class CellProperty<T>
     {
-        public int ID { get; }
+        public abstract  int ID { get; }
 
-        public T Value { get; set; }       
+        public abstract T Value { get; set; }       
     }
 
 

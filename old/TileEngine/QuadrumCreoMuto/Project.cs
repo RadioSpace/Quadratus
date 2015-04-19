@@ -8,9 +8,14 @@ namespace QuadrumCreoMuto
     class Project
     {
         string name;
-        public string Name { get { retunr name; } }
+        public string Name { get { return name; } }
 
-        public Project 
+        public Project(string n) 
+        {
+            name = n;
+        }
+
+        
 
     }
 }

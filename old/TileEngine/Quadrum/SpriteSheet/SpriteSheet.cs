@@ -62,6 +62,14 @@ namespace Quadrum.SpriteSheet
         
         }
 
+        private static SpriteSheet GetFailedSpriteSheet()
+        {
+            //this will return a standard fail sprite sheet
+            return null;
+        }
+
+
+
 
 
 

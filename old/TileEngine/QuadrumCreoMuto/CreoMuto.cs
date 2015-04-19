@@ -20,12 +20,19 @@ namespace QuadrumCreoMuto
         GraphicsDevice gd;
         SpriteBatch sb;
 
+
+
         
-      
+        
 
         public CreoMuto()
         {
             InitializeComponent();
+        }
+
+        private void CreoMuto_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Quadrum.SpriteSheet
         Texture2D tex;
 
         /// <summary>
-        /// craetes the texture that ius placed in the spritesheet
+        /// craetes the texture that is placed in the spritesheet
         /// </summary>
         /// <param name="d">the Device</param>
         /// <param name="path">the path t o the texture</param>

@@ -24,15 +24,17 @@ namespace Quadrum
             }
         }
 
-        
+        public Gob()
+        {
+            
+        }
 
 
     }
 
     public interface ICellMember
     {
-
-        public EventHandler<CellMemberEventArgs> this[CellMemberEvents ce] { get; set; }
+        EventHandler<CellMemberEventArgs> this[CellMemberEvents ce] { get; set; }
     }
 
     public class CellMemberEventArgs : EventArgs
@@ -43,6 +45,7 @@ namespace Quadrum
         {
             member = mem;
         }
+
 
     }
 }

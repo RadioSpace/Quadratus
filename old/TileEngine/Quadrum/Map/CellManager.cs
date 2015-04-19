@@ -27,7 +27,7 @@ namespace Quadrum.Map
         public void AddMember(ICellMember member )
         {
 
-
+            
             members.Add(new CellMemberEventArgs(member));
 
                 
@@ -78,8 +78,8 @@ namespace Quadrum.Map
 
 
         bool memberexists(ICellMember member)
-        { 
-            return 
+        {
+            return members.Select(a => a.member).Contains(member);
         }
                
     }
