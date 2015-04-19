@@ -1,0 +1,28 @@
+﻿<Window x:Class="textureCompositor.TextureSetupDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="do the math before you enter I am not checking for you" Height="200" Width="300">
+    <Grid>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="cell width:        "/>
+                <TextBox Name="cellwidthTextBox" Width="45"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="cell height height:"/>
+                <TextBox Name="cellheightTextBox" Width="45"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="texture width:    "/>
+                <TextBox Name="texwidthTextBox" Width="45"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="texture height:   "/>
+                <TextBox Name="texheightTextBox" Width="45"/>
+            </StackPanel>
+            
+            <Button Name="okayButton" Click="okayButton_Click" Content="OKAY" FontSize="22"/>
+            <Button Name="cancelButton" Click="cancelButton_Click" Content="CANCEL"/>
+        </StackPanel>
+    </Grid>
+</Window>

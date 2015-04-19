@@ -1,0 +1,50 @@
+﻿<Window x:Class="textureCompositor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+       
+        Title="MainWindow" Width="620" Height="500">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <ContextMenu x:Key="MainMenu" >
+                        <ContextMenu.Items>
+                            <MenuItem Name="newMI" Header="New Composite Texture" Click="newMI_Click">
+                                
+                            </MenuItem>
+                            <MenuItem Name="savMI" Header="Save Composite Texture" Click="savMI_Click">
+
+                            </MenuItem>
+                            <MenuItem Name="opnMI" Header="Open Composite Texture" Click="opnMI_Click">
+
+                            </MenuItem>
+                            
+                        </ContextMenu.Items>
+                    </ContextMenu>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+
+    <Grid ContextMenu="{StaticResource MainMenu}">
+        <StackPanel Orientation="Horizontal">
+            <StackPanel Width="120">
+
+
+                <Button Name="browseButton" Click="browseButton_Click" Content="Browse" FontFamily="Courier New" FontSize="22"/>
+                <ScrollViewer Height="430">
+                <ListBox Name="textureList" ItemsSource="{Binding}">
+                    
+                    
+                    
+                </ListBox>
+                </ScrollViewer>
+            </StackPanel>
+            
+            <Image Name="textureImage" Width="480" Height="480"/>
+            
+        </StackPanel>
+    </Grid>
+</Window>
