@@ -30,6 +30,9 @@ namespace MapCreate
 
             project = new MapProject("C:\\Users\\daniel\\Desktop\\Eat the fail.cmp", 2, 2, 24);
 
+            DataGridViewColumnCollection cols = new DataGridViewColumnCollection(dataGridView1);
+
+
 
         }
 
@@ -37,18 +40,6 @@ namespace MapCreate
         {
             //i don't know if I want to have the GameShell know about the MapProject Type just yet.
             //MapProject is designed after the gameshells needs but they don't rely on each other.
-            GameShell gs = new GameShell(
-                project.TextureDataPath,
-                project.GetSurfaces(),
-                project.gridWidth,
-                project.gridHeight,
-                project.cellSize,
-                project.getPNGPath());
-
-            gs.Show();
-
-
-
 
 
         }

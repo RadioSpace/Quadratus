@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
+
+using System.Drawing;
+
 using System.IO;
 using LibNoise;
 
-namespace STAR
+namespace STAR.En_gin
 {
-    public partial class GameShell : Form
+    public class TileEngine : IDisposable
     {
         #region static 
         public static Random rand;
         public static object locker;
-        static GameShell()
+        static TileEngine()
         {
             rand = new Random();
             locker = new object();
@@ -45,7 +44,7 @@ namespace STAR
         SharpDX.Direct3D11.Texture2D target;
         SharpDX.Direct3D11.RenderTargetView targetveiw;
 
-        
+
         SharpDX.Direct3D11.Texture2D surface;
         SharpDX.Direct3D11.ShaderResourceView surfaceveiw;
 
@@ -53,17 +52,19 @@ namespace STAR
 
         #endregion
 
+
         #region util
 
         bool Power = true;
-
+        
         uint indexcount;
         float cellsize = 24;
 
         TextureDataCollection tdc;
         Surface[] SurfaceData;
 
-
+        SharpDX.ViewportF view;
+               
         int old_X;
         int old_y;
 
@@ -75,37 +76,48 @@ namespace STAR
         bool change = false;
 
         bool cellupdate = false;
-
-
+        
+        
 
         #endregion
 
-        
-        public GameShell(string cmpPath,Surface[] surfaceData,int cellsWide,int cellsHigh,int cellSize,string texturepath)
+        /// <summary>
+        /// creates the negine in which the game shall run
+        /// </summary>
+        /// <param name="cmpPath">the path of the composite texture</param>
+        /// <param name="surfaceData">the path to the surface data</param>
+        /// <param name="cellsWide">how many cells wide the  map is</param>
+        /// <param name="cellsHigh">how many cells high the map is</param>
+        /// <param name="cellSize"> the size in pixels each cell is</param>
+        /// <param name="windowwidth">the width in pixals of the window</param>
+        /// <param name="windowheight">the height in pixals of the window</param>
+        /// <param name="texturepath">the path of the sprite sheet</param>
+        /// <param name="handle">the window handle</param>
+        public TileEngine(TileEngineDescription desc)
         {
-            InitializeComponent();
-            tdc = TextureDataCollection.ReadCollection(cmpPath);//test code!!! later this path will be passed in
+            tdc = TextureDataCollection.ReadCollection(desc.);
 
-            InitializeGraphics(surfaceData, cellsWide, cellsHigh,texturepath);
+            InitializeGraphics(desc.surfaceData, desc.cellsWide, desc.cellsHigh, desc.texturepath, desc.handle);
+
+            view = new SharpDX.ViewportF(0, 0, desc.windowwidth, desc.windowheight);
+
 
             //start drawing
             System.Threading.Tasks.Task.Factory.StartNew(render);
 
-            
-                        
+
         }
 
-
-        void InitializeGraphics(Surface[] surfacepositions, int width,int height,string spritesheetpath)
+        void InitializeGraphics(Surface[] surfacepositions, int width, int height, string spritesheetpath,IntPtr Handle)
         {
             #region generate data
 
             SurfaceData = surfacepositions;
-            
+
             //the grid
-            Size grid = new System.Drawing.Size(width, height );
+            Size grid = new System.Drawing.Size(width, height);
             uint gridvolume = (uint)(grid.Width * grid.Height);
-            
+
             //generate the indexes to reference      
             indexcount = gridvolume * 6;
             uint[] indices = new uint[indexcount];
@@ -118,9 +130,9 @@ namespace STAR
                 indices[x + 3] = 2 + y;
                 indices[x + 4] = 1 + y;
                 indices[x + 5] = 3 + y;
-            }       
+            }
 
-            SharpDX.Matrix p = SharpDX.Matrix.PerspectiveLH(this.ClientSize.Width,this.ClientSize.Height, 1, 201);
+            SharpDX.Matrix p = SharpDX.Matrix.PerspectiveLH(view.Width, view.Height, 1, 201);
             SharpDX.Matrix v = SharpDX.Matrix.LookAtLH(new SharpDX.Vector3(0, 0, 100), SharpDX.Vector3.Zero, SharpDX.Vector3.UnitY);
             SharpDX.Matrix w = SharpDX.Matrix.Identity;
 
@@ -128,7 +140,7 @@ namespace STAR
             v.Transpose();
             w.Transpose();
 
-            VArgs va = new VArgs(){world = w, glbTrans = SharpDX.Vector3.Zero,cs = cellsize / 2f, texcoordbase = tdc.CellUnit };
+            VArgs va = new VArgs() { world = w, glbTrans = SharpDX.Vector3.Zero, cs = cellsize / 2f, texcoordbase = tdc.CellUnit };
 
             #endregion
 
@@ -142,8 +154,8 @@ namespace STAR
                 BufferCount = 4,
                 Flags = SharpDX.DXGI.SwapChainFlags.None,
                 IsWindowed = true,
-                ModeDescription = new SharpDX.DXGI.ModeDescription(this.ClientSize.Width, this.ClientSize.Height, new SharpDX.DXGI.Rational(60, 1), SharpDX.DXGI.Format.R8G8B8A8_UNorm),
-                OutputHandle = this.Handle,
+                ModeDescription = new SharpDX.DXGI.ModeDescription((int)view.Width, (int)view.Height, new SharpDX.DXGI.Rational(60, 1), SharpDX.DXGI.Format.R8G8B8A8_UNorm),
+                OutputHandle = Handle,
                 SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0),
                 SwapEffect = SharpDX.DXGI.SwapEffect.Discard,
                 Usage = SharpDX.DXGI.Usage.RenderTargetOutput
@@ -156,9 +168,9 @@ namespace STAR
 
 
             //index buffer
-            ib = SharpDX.Direct3D11.Buffer.Create(d, SharpDX.Direct3D11.BindFlags.IndexBuffer,indices);
+            ib = SharpDX.Direct3D11.Buffer.Create(d, SharpDX.Direct3D11.BindFlags.IndexBuffer, indices);
 
-            surfacedata = SharpDX.Direct3D11.Buffer.Create(d,surfacepositions ,new SharpDX.Direct3D11.BufferDescription()
+            surfacedata = SharpDX.Direct3D11.Buffer.Create(d, surfacepositions, new SharpDX.Direct3D11.BufferDescription()
             {
                 BindFlags = SharpDX.Direct3D11.BindFlags.ShaderResource,
                 CpuAccessFlags = SharpDX.Direct3D11.CpuAccessFlags.None,
@@ -169,7 +181,7 @@ namespace STAR
             });
             surfacedataveiw = new SharpDX.Direct3D11.ShaderResourceView(d, surfacedata);
 
-            texturedata = SharpDX.Direct3D11.Buffer.Create(d, tdc.GetTexCoords(), new SharpDX.Direct3D11.BufferDescription() 
+            texturedata = SharpDX.Direct3D11.Buffer.Create(d, tdc.GetTexCoords(), new SharpDX.Direct3D11.BufferDescription()
             {
                 BindFlags = SharpDX.Direct3D11.BindFlags.ShaderResource,
                 CpuAccessFlags = SharpDX.Direct3D11.CpuAccessFlags.None,
@@ -196,7 +208,7 @@ namespace STAR
                 BorderColor = SharpDX.Color.Transparent,
                 ComparisonFunction = SharpDX.Direct3D11.Comparison.Never,
                 Filter = SharpDX.Direct3D11.Filter.MinMagMipLinear,
-                MaximumAnisotropy = 4,     
+                MaximumAnisotropy = 4,
                 MaximumLod = 1,
                 MinimumLod = 0,
                 MipLodBias = 0
@@ -228,7 +240,7 @@ namespace STAR
             d.ImmediateContext.PixelShader.SetShaderResource(0, surfaceveiw);
 
             //rasterizer
-            d.ImmediateContext.Rasterizer.SetViewport(0, 0, this.ClientSize.Width, this.ClientSize.Height);
+            d.ImmediateContext.Rasterizer.SetViewport(view);
             d.ImmediateContext.Rasterizer.State = new SharpDX.Direct3D11.RasterizerState(d, new SharpDX.Direct3D11.RasterizerStateDescription()
             {
                 CullMode = SharpDX.Direct3D11.CullMode.None,
@@ -240,7 +252,7 @@ namespace STAR
 
             #endregion
 
-            
+
         }
 
         void render()
@@ -262,15 +274,15 @@ namespace STAR
                         SharpDX.Matrix w = SharpDX.Matrix.Identity;
                         w.Transpose();
 
-                        VArgs vargs = new VArgs() {world = w,cs = cellsize / 2f,glbTrans = newlook,texcoordbase = tdc.CellUnit};
+                        VArgs vargs = new VArgs() { world = w, cs = cellsize / 2f, glbTrans = newlook, texcoordbase = tdc.CellUnit };
 
-                        d.ImmediateContext.UpdateSubresource( ref vargs, Arg);
+                        d.ImmediateContext.UpdateSubresource(ref vargs, Arg);
 
-                        
+
                         SurfaceData[0].texindex = (uint)(SurfaceData[0].texindex == 0 ? 1 : 0);
 
                         d.ImmediateContext.UpdateSubresource(SurfaceData, surfacedata);
-                        
+
 
                         change = false;
                     }
@@ -281,18 +293,20 @@ namespace STAR
                 ///////////////////////////////////////////////////////////////////////////////
                 ///////////////////////////////////////////////////////////////////////////////
                 ///////////////////////////////////////////////////////////////////////////////
-                
+
 
 
                 //clear the screen
                 d.ImmediateContext.ClearRenderTargetView(targetveiw, SharpDX.Color.CornflowerBlue);
-                
+
                 //draw all tiles
                 d.ImmediateContext.DrawIndexed(System.Math.Abs((int)indexcount), 0, 0);
 
                 //render to the screen
-                sc.Present(0, SharpDX.DXGI.PresentFlags.None);                
+                sc.Present(0, SharpDX.DXGI.PresentFlags.None);
             }
+
+           
         }
 
         void dualincrease(ref uint x, uint a,ref uint y, uint b)
@@ -301,89 +315,68 @@ namespace STAR
             y += b;            
         }
 
-        protected override void OnClosing(CancelEventArgs e)
+        public void Dispose()
         {
             Power = false;//power is used by another thread
 
             System.Threading.Thread.Sleep(500);//give the other thread time to react
 
             //shut'er down
-            if ( d != null) d.Dispose();
-            if ( sc != null) sc.Dispose();
-            if ( ib != null) ib.Dispose();
-            if ( surfacedata != null) surfacedata.Dispose();            
-            if ( target != null) target.Dispose();
-            if ( targetveiw != null) targetveiw.Dispose();
-            if ( P != null) P.Dispose();
-            if ( V != null) V.Dispose();
-            if ( surfacedataveiw != null) surfacedataveiw.Dispose();
-            if ( sampler != null) sampler.Dispose();
-            if ( Arg != null) Arg.Dispose();
-            if ( texturedata != null) texturedata.Dispose();
-            if ( texturedataveiw != null) texturedataveiw.Dispose();
-
-            base.OnClosing(e);
+            if (d != null) d.Dispose();
+            if (sc != null) sc.Dispose();
+            if (ib != null) ib.Dispose();
+            if (surfacedata != null) surfacedata.Dispose();
+            if (target != null) target.Dispose();
+            if (targetveiw != null) targetveiw.Dispose();
+            if (P != null) P.Dispose();
+            if (V != null) V.Dispose();
+            if (surfacedataveiw != null) surfacedataveiw.Dispose();
+            if (sampler != null) sampler.Dispose();
+            if (Arg != null) Arg.Dispose();
+            if (texturedata != null) texturedata.Dispose();
+            if (texturedataveiw != null) texturedataveiw.Dispose();
         }
+    }
 
+    /// <summary>
+    /// the data needed by the engine
+    /// </summary>
+    public struct TileEngineDescription
+    { 
+        public readonly string cmpPath;
+        public readonly Surface[] surfaceData;
+        public readonly int cellsWide;
+        public readonly int cellsHigh;
+        public readonly int cellSize;
+        public readonly int windowwidth;
+        public readonly int windowheight;
+        public readonly string texturepath;
+        public readonly IntPtr handle;
 
-
-        #region onMouse
-        protected override void OnMouseDown(MouseEventArgs e)
+        /// <summary>
+        /// The description of a tile engine
+        /// </summary>
+        /// <param name="cPath">cmp path</param>
+        /// <param name="sData">each cells data</param>
+        /// <param name="cWide">how many cells wide</param>
+        /// <param name="cHigh">how many cells high</param>
+        /// <param name="cSize">the size of each cell</param>
+        /// <param name="wWidth">the width of the viewport</param>
+        /// <param name="wHeight">the hieght of the viewport</param>
+        /// <param name="tPath">the sprite sheet path</param>
+        /// <param name="h">the window handle</param>
+        public TileEngineDescription(string cPath, Surface[] sData, int cWide, int cHigh, int cSize, int wWidth, int wHeight, string tPath, IntPtr h)
         {
-            if (firstcatch)
-            {
-
-                old_X =  (int)newlook.X + e.X;
-                old_y =  (int)newlook.Y + e.Y;
-                firstcatch = false;
-
-            }
-            base.OnMouseDown(e);
-        }
-
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            if (!firstcatch)
-            {//this is the else for the onmousedown method
-                lock (GameShell.locker)
-                {
-                    newlook = new SharpDX.Vector3(old_X - e.X , old_y - e.Y , ms_z);
-
-                    change = true;
-          
-                }  
-            }
-            
-            base.OnMouseMove(e);
-        }
-
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            firstcatch = true;
-
-            old_X = (int)newlook.X;
-            old_y = (int)newlook.Y;
-            base.OnMouseUp(e);
-        }
-
-        protected override void OnMouseWheel(MouseEventArgs e)
-        {                       
-            ms_z = e.Delta;
-            base.OnMouseWheel(e);
-        }
-        #endregion
-
-        private void GameShell_Load(object sender, EventArgs e)
-        {
-
-        }
-
-
-        public void updatesurface(Surface[] surfaces)
-        {
-            
+            cmpPath = cPath;
+            surfaceData = sData;
+            cellsWide = cWide;
+            cellsHigh = cHigh;
+            cellSize = cSize;
+            windowwidth = wWidth;
+            windowheight = wHeight;
+            texturepath = tPath;
+            handle = h;
         }
 
     }
 }
-

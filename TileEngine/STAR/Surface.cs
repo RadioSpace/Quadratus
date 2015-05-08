@@ -7,7 +7,7 @@ namespace STAR
 {
     [Serializable]
     [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential,Size=28)]
-    public struct Surface
+    public struct Surface : IEquatable<Surface>
     {
         /// <summary>
         /// the amount to translate the model position by
@@ -35,6 +35,36 @@ namespace STAR
         public override string ToString()
         {
             return "index = " + texindex;
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            hash = hash * 31 + trans.GetHashCode();
+            hash = hash * 31 + color.GetHashCode();
+            return hash * 31 + texindex.GetHashCode();
+        }
+
+        public static bool operator ==(Surface s1, Surface s2)
+        {
+            return s1.Equals(s2);
+        }
+        public static bool operator !=(Surface s1, Surface s2)
+        {
+            return !s1.Equals(s2);
+        }
+
+        public override bool Equals(object obj)
+        {
+
+            if (obj is Surface)
+                return Equals((Surface)obj);
+            else return false;
+        }
+
+        public bool Equals(Surface other)
+        {
+            return this.color == other.color && this.texindex == other.texindex && this.trans == other.trans;
         }
     }
 
