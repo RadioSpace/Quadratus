@@ -7,6 +7,9 @@ using SharpDX;
 
 namespace STAR
 {
+    /// <summary>
+    /// a collections of surfaces on a grid
+    /// </summary>
     public class SurfaceCollection
     {
 
@@ -43,17 +46,27 @@ namespace STAR
 
         #endregion
 
+        /// <summary>
+        /// creates a collections of surfaces on a grid
+        /// </summary>
+        /// <param name="w">the width in cells of the grid</param>
+        /// <param name="h">the height in cells of the grid</param>
         public SurfaceCollection(int w, int h)
         { 
             surfaces = new Surface[w * h];
         }
 
-        public void ForAll(Func<Surface,Surface> a)
+        /// <summary>
+        /// performs the scpecified action on all cells
+        /// </summary>
+        /// <param name="a">the action to perform</param>
+        public void ForAll(SurfaceTransform a)
         {
             for (int x = 0; x < surfaces.Length; x++)
             {
                 Surface oldS = surfaces[x];
-                Surface newS = a(surfaces[x]);
+                a(ref surfaces[x]);
+                Surface newS = surfaces[x];
 
                 if (oldS != newS)
                 {
@@ -74,7 +87,11 @@ namespace STAR
             }
         }
 
-        public void ForAll(Func<Surface, int, int, Surface> a)
+        /// <summary>
+        /// performs the scpecified action on all cells
+        /// </summary>
+        /// <param name="a">the action to perform</param>
+        public void ForAll(SurfaceTransformWithCoord a)
         {
             for (int x = 0; x < width; x++)
             {
@@ -83,7 +100,8 @@ namespace STAR
                     int index = x + (y * width);
 
                     Surface oldS = surfaces[index];
-                    Surface newS = a(surfaces[index], x, y);
+                    a(ref surfaces[index], x, y);
+                    Surface newS = surfaces[index];
 
                     if (watched.Count > 0)
                     {
@@ -108,6 +126,12 @@ namespace STAR
             }
         }
 
+        /// <summary>
+        /// Gets or Sets the cell at the specified coordinates
+        /// </summary>
+        /// <param name="x">the x COORD</param>
+        /// <param name="y">the y COORD</param>
+        /// <returns>a Surface of a cell on a grid</returns>
         public Surface this[int x,int y]
         {
             get { return surfaces[x + (y * width)]; }
@@ -124,6 +148,11 @@ namespace STAR
             }
         }
 
+        /// <summary>
+        /// Gets or Sets the cell at the specified Index
+        /// </summary>
+        /// <param name="index">the index of a cell</param>
+        /// <returns>a Surface of a cell on a grid</returns>
         public Surface this[int index]
         {
             get { return surfaces[index]; }
@@ -260,4 +289,7 @@ namespace STAR
             height = h;
         }
     }
+
+    public delegate void SurfaceTransform(ref Surface s);
+    public delegate void SurfaceTransformWithCoord(ref Surface s,int x,int y);
 }

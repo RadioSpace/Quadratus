@@ -5,6 +5,9 @@ using System.Text;
 
 namespace STAR
 {
+    /// <summary>
+    /// teh surface of a cell on a grid
+    /// </summary>
     [Serializable]
     [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential,Size=28)]
     public struct Surface : IEquatable<Surface>
@@ -24,7 +27,12 @@ namespace STAR
         /// </summary>
         public uint texindex;
 
-
+        /// <summary>
+        /// creates a surface of a cell on a grid
+        /// </summary>
+        /// <param name="t">the translation of the cell</param>
+        /// <param name="c">the color offset of the cell</param>
+        /// <param name="tindex">the index of the texture on the sprite sheet to texture this cell</param>
         public Surface(SharpDX.Vector3 t, SharpDX.Vector3 c,uint tindex)
         {
             trans = t;
@@ -32,11 +40,16 @@ namespace STAR
             texindex = tindex;
         }
 
+        /// <summary>
+        /// returns the index number of the texture used and the translation of the cell as text
+        /// </summary>
+        /// <returns>a string representation of the Surface</returns>
         public override string ToString()
         {
-            return "index = " + texindex;
+            return "texindex = " + texindex + " :: trans = {" + trans.X + "," + trans.Y + "};";
         }
 
+        #region equality
         public override int GetHashCode()
         {
             int hash = 17;
@@ -44,7 +57,7 @@ namespace STAR
             hash = hash * 31 + color.GetHashCode();
             return hash * 31 + texindex.GetHashCode();
         }
-
+        
         public static bool operator ==(Surface s1, Surface s2)
         {
             return s1.Equals(s2);
@@ -66,10 +79,14 @@ namespace STAR
         {
             return this.color == other.color && this.texindex == other.texindex && this.trans == other.trans;
         }
+        #endregion
+         
     }
 
     
-
+    /// <summary>
+    /// vertex shader arguments
+    /// </summary>
     [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential, Size = 96)]
     public struct VArgs
     {
