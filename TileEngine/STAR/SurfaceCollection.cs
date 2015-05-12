@@ -10,6 +10,7 @@ namespace STAR
     /// <summary>
     /// a collections of surfaces on a grid
     /// </summary>
+    [Serializable]
     public class SurfaceCollection : IEnumerable<Surface>
     {
 
@@ -31,6 +32,11 @@ namespace STAR
         /// gets the number of cells in the grid.
         /// </summary>
         public int Length { get { return surfaces.Length; } }
+
+        /// <summary>
+        /// gets the size in bytes of the array of surfaces
+        /// </summary>
+        public int SizeOf { get { return SharpDX.Utilities.SizeOf<Surface>(surfaces); } }
 
 
         #region Surface listening
@@ -55,6 +61,23 @@ namespace STAR
         { 
             surfaces = new Surface[w * h];
             watched = new List<int>();
+
+            width = w;
+            height = h;
+
+        }
+        public SurfaceCollection(Surface[] data,int w, int h)
+        {
+            int area;
+            if (data.Length == (area = w * h))
+            {
+                surfaces = data;
+                watched = new List<int>();
+
+                width = w;
+                height = h;
+            }
+            else { throw new InvalidOperationException("the Length of the data must equal to w * h"); }
         }
 
         /// <summary>
@@ -63,28 +86,28 @@ namespace STAR
         /// <param name="a">the action to perform</param>
         public void ForAll(SurfaceTransform a)
         {
-            for (int x = 0; x < surfaces.Length; x++)
+            for (int x = 0; x < Width; x++)
             {
-                Surface oldS = surfaces[x];
-                a(ref surfaces[x]);
-                Surface newS = surfaces[x];
-
-                if (oldS != newS)
+                for (int y = 0; y < Height; y++)
                 {
-                    if (watched.Contains(x))
+                    int index = x + (y * width);
+
+                    Surface oldS = surfaces[index];
+                    a(ref surfaces[index]);
+                    Surface newS = surfaces[index];
+
+                    if (oldS != newS)
                     {
-                        if (width > 0)
+                        if (watched.Contains(x))
                         {
-                            OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, newS, x % width, x / width, x, surfaces.Length, width, height));
-                        }
-                        else
-                        {//width is zero so we won't do math
-                            OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, newS, 0, 0, x, surfaces.Length, width, height));
+                            
+                           OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, newS, x , y, index, surfaces.Length, width, height));
+                            
                         }
                     }
-                }
 
-                surfaces[x] = newS;                
+                    surfaces[x] = newS;
+                }
             }
         }
 
@@ -110,19 +133,33 @@ namespace STAR
                         {
                             if (watched.Contains(x))
                             {
-                                if (width > 0)
-                                {
-                                    OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, newS, x % width, x / width, x, surfaces.Length, width, height));
-                                }
-                                else
-                                {//width is zero so we won't do math
-                                    OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, newS, 0, 0, x, surfaces.Length, width, height));
-                                }
+                                OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, newS, x, y, index, surfaces.Length, width, height));                           
                             }
                         }
                     }
 
                     surfaces[x] = newS;
+                }
+            }
+        }
+
+        public void For(SurfaceTransform a, int start, int end)
+        {
+            if (start > -1 && start + end < Length && end > start)
+            {
+                for (int i = start; i < end; i++)
+                {
+                    Surface oldS = surfaces[i];
+                    a(ref surfaces[i]);
+                    Surface newS = surfaces[i];
+
+                    if (oldS != newS)
+                    {
+                        if (watched.Contains(i))
+                        {
+                            OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, newS, i % width == 0 ? 1 : width, i / width == 0 ? 1 : width, i, surfaces.Length, width, height));
+                        }
+                    }
                 }
             }
         }

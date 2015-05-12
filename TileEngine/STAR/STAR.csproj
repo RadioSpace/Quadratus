@@ -69,6 +69,7 @@
     <Compile Include="GameShell.Designer.cs">
       <DependentUpon>GameShell.cs</DependentUpon>
     </Compile>
+    <Compile Include="MapProject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Surface.cs" />
     <Compile Include="SurfaceCollection.cs" />

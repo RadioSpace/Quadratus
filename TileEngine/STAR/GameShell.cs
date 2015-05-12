@@ -61,7 +61,7 @@ namespace STAR
         float cellsize = 24;
 
         TextureDataCollection tdc;
-        Surface[] SurfaceData;
+        SurfaceCollection surfaces;
 
 
         int old_X;
@@ -85,8 +85,10 @@ namespace STAR
         {
             InitializeComponent();
             tdc = TextureDataCollection.ReadCollection(cmpPath);//test code!!! later this path will be passed in
+            surfaces = new SurfaceCollection(cellsWide, cellsHigh);
 
-            InitializeGraphics(surfaceData, cellsWide, cellsHigh,texturepath);
+
+            InitializeGraphics( cellsWide, cellsHigh,texturepath);
 
             //start drawing
             System.Threading.Tasks.Task.Factory.StartNew(render);
@@ -96,11 +98,11 @@ namespace STAR
         }
 
 
-        void InitializeGraphics(Surface[] surfacepositions, int width,int height,string spritesheetpath)
+        void InitializeGraphics(int width,int height,string spritesheetpath)
         {
             #region generate data
 
-            SurfaceData = surfacepositions;
+            
             
             //the grid
             Size grid = new System.Drawing.Size(width, height );
@@ -158,12 +160,12 @@ namespace STAR
             //index buffer
             ib = SharpDX.Direct3D11.Buffer.Create(d, SharpDX.Direct3D11.BindFlags.IndexBuffer,indices);
 
-            surfacedata = SharpDX.Direct3D11.Buffer.Create(d,surfacepositions ,new SharpDX.Direct3D11.BufferDescription()
+            surfacedata = SharpDX.Direct3D11.Buffer.Create(d,surfaces.ToArray(),new SharpDX.Direct3D11.BufferDescription()
             {
                 BindFlags = SharpDX.Direct3D11.BindFlags.ShaderResource,
                 CpuAccessFlags = SharpDX.Direct3D11.CpuAccessFlags.None,
                 OptionFlags = SharpDX.Direct3D11.ResourceOptionFlags.BufferStructured,
-                SizeInBytes = SharpDX.Utilities.SizeOf<Surface>(surfacepositions),
+                SizeInBytes = surfaces.SizeOf,
                 StructureByteStride = System.Runtime.InteropServices.Marshal.SizeOf(typeof(Surface)),
                 Usage = SharpDX.Direct3D11.ResourceUsage.Default
             });
