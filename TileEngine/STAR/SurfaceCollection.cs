@@ -10,7 +10,7 @@ namespace STAR
     /// <summary>
     /// a collections of surfaces on a grid
     /// </summary>
-    public class SurfaceCollection
+    public class SurfaceCollection : IEnumerable<Surface>
     {
 
         Surface[] surfaces;
@@ -54,6 +54,7 @@ namespace STAR
         public SurfaceCollection(int w, int h)
         { 
             surfaces = new Surface[w * h];
+            watched = new List<int>();
         }
 
         /// <summary>
@@ -225,6 +226,116 @@ namespace STAR
             return watched.ToArray();
         }
 
+        #endregion
+
+        #region IEnumerable<Surface>
+        public IEnumerator<Surface> GetEnumerator()
+        {
+            return surfaces.AsEnumerable<Surface>().GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return surfaces.GetEnumerator();
+        }
+        #endregion
+
+        #region SetValues
+        /// <summary>
+        /// sets a value of the cell
+        /// </summary>
+        /// <param name="index">the index number of the cell</param>
+        /// <param name="TextureIndex">the TextureIndex to set the cell to</param>
+        /// <returns>true if the index is within bounds of the array</returns>
+        public bool SetCellValue(int index,uint TextureIndex)
+        {
+            if (index < surfaces.Length && index > -1)
+            { surfaces[index].texindex = TextureIndex; return true; }
+            else return false;
+        }
+
+        /// <summary>
+        /// sets a value of the cell
+        /// </summary>
+        /// <param name="index">the index number of the cell</param>
+        /// <param name="Translation">the translation to set the cell to</param>
+        /// <returns>true if the index is within bounds of the array</returns>
+        public bool SetCellValue(int index, Vector3 Translation)
+        {
+            if (index < surfaces.Length && index > -1)
+            { surfaces[index].trans = Translation; return true; }
+            else return false;
+        }
+
+        /// <summary>
+        /// sets a value of the cell
+        /// </summary>
+        /// <param name="index">the index number of the cell</param>
+        /// <param name="Color">the color to set the cell to</param>
+        /// <returns>true if the index is within bounds of the array</returns>
+        public bool SetCellValue(int index, Color Color)
+        {
+            if (index < surfaces.Length && index > -1)
+            { surfaces[index].color = (Color3)Color; return true; }
+            else return false;
+        }
+
+        /// <summary>
+        /// sets a value of the cell
+        /// </summary>
+        /// <param name="index">the index number of the cell</param>
+        /// <param name="TextureIndex">the TextureIndex to set the cell to</param>
+        /// <param name="Translation">the translation to set the cell to</param>
+        /// <returns>true if the index is within bounds of the array</returns>
+        public bool SetCellValue(int index, uint TextureIndex, Vector3 Translation)
+        {
+            if (index < surfaces.Length && index > -1)
+            { surfaces[index].trans = Translation; surfaces[index].texindex = TextureIndex; return true; }
+            else return false;
+        }
+
+        /// <summary>
+        /// sets a value of the cell
+        /// </summary>
+        /// <param name="index">the index number of the cell</param>
+        /// <param name="Color">the color to set the cell to</param>
+        /// <param name="Translation">the translation to set the cell to</param>
+        /// <returns>true if the index is within bounds of the array</returns>
+        public bool SetCellValue(int index, Color Color, Vector3 Translation)
+        {
+            if (index < surfaces.Length && index > -1)
+            { surfaces[index].trans = Translation; surfaces[index].color = (Color3)Color; return true; }
+            else return false;
+        }
+
+        /// <summary>
+        /// sets a value of the cell
+        /// </summary>
+        /// <param name="index">the index number of the cell</param>
+        /// <param name="Color">the color to set the cell to</param>
+        /// <param name="TextureIndex">the TextureIndex to set the cell to</param>
+        /// <returns>true if the index is within bounds of the array</returns>
+        public bool SetCellValue(int index, Color Color, uint TextureIndex)
+        {
+            if (index < surfaces.Length && index > -1)
+            { surfaces[index].texindex =TextureIndex; surfaces[index].color = (Color3)Color; return true; }
+            else return false;
+        }
+
+        /// <summary>
+        /// sets a value of the cell
+        /// </summary>
+        /// <param name="index">the index number of the cell</param>
+        /// <param name="Color">the color to set the cell to</param>
+        /// <param name="TextureIndex">the TextureIndex to set the cell to</param>
+        /// <param name="Translation">the translation to set the cell to</param>
+        /// <returns>true if the index is within bounds of the array</returns>
+        public bool SetCellValue(int index, Color Color, uint TextureIndex, Vector3 Translation)
+        {
+            if (index < surfaces.Length && index > -1)
+            { surfaces[index].texindex = TextureIndex; surfaces[index].color = (Color3)Color; surfaces[index].trans = Translation; return true; }
+            else return false;
+        }
         #endregion
     }
 

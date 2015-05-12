@@ -71,10 +71,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MapCreate\MapCreate.csproj">
-      <Project>{829441a2-7b7f-46d3-b509-64890735a559}</Project>
-      <Name>MapCreate</Name>
-    </ProjectReference>
     <ProjectReference Include="..\STAR\STAR.csproj">
       <Project>{d32624f0-db44-4e2c-9c6e-85245d214567}</Project>
       <Name>STAR</Name>

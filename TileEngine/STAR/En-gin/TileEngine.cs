@@ -82,20 +82,11 @@ namespace STAR.En_gin
         #endregion
 
         /// <summary>
-        /// creates the negine in which the game shall run
+        /// creates the engine in which the game shall run
         /// </summary>
-        /// <param name="cmpPath">the path of the composite texture</param>
-        /// <param name="surfaceData">the path to the surface data</param>
-        /// <param name="cellsWide">how many cells wide the  map is</param>
-        /// <param name="cellsHigh">how many cells high the map is</param>
-        /// <param name="cellSize"> the size in pixels each cell is</param>
-        /// <param name="windowwidth">the width in pixals of the window</param>
-        /// <param name="windowheight">the height in pixals of the window</param>
-        /// <param name="texturepath">the path of the sprite sheet</param>
-        /// <param name="handle">the window handle</param>
         public TileEngine(TileEngineDescription desc)
         {
-            tdc = TextureDataCollection.ReadCollection(desc.);
+            tdc = TextureDataCollection.ReadCollection(desc.cmpPath);
 
             InitializeGraphics(desc.surfaceData, desc.cellsWide, desc.cellsHigh, desc.texturepath, desc.handle);
 
@@ -263,8 +254,7 @@ namespace STAR.En_gin
             while (Power)
             {
                 ///////////////////////////////////////////////////////////////////////////////
-                //this is temporary till i figure out how i want the data to be updated/////////
-                ///////////////////////////////////////////////////////////////////////////////
+               ///////////////////    data is updated by a SurfaceCollection    //////////////
                 ///////////////////////////////////////////////////////////////////////////////
                 lock (locker)
                 {
@@ -289,7 +279,6 @@ namespace STAR.En_gin
 
 
                 }
-                ///////////////////////////////////////////////////////////////////////////////
                 ///////////////////////////////////////////////////////////////////////////////
                 ///////////////////////////////////////////////////////////////////////////////
                 ///////////////////////////////////////////////////////////////////////////////

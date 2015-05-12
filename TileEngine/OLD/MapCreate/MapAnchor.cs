@@ -30,7 +30,7 @@ namespace MapCreate
 
             project = new MapProject("C:\\Users\\daniel\\Desktop\\Eat the fail.cmp", 2, 2, 24);
 
-            DataGridViewColumnCollection cols = new DataGridViewColumnCollection(dataGridView1);
+
 
 
 

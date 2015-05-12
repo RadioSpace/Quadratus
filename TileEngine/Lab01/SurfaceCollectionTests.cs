@@ -24,13 +24,7 @@ namespace Lab01
                 return;
             }
 
-            int counter = 0;
-            grid.ForAll(a => 
-            {
-                a = new Surface( counter);
-                counter++;
-            });
-
+            
 
 
            

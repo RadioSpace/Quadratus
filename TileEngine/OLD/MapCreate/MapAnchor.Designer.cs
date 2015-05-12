@@ -34,7 +34,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(988, 434);
+            this.ClientSize = new System.Drawing.Size(221, 434);
             this.Name = "MapAnchor";
             this.Text = "MapAnchor";
             this.Load += new System.EventHandler(this.MapAnchor_Load);
