@@ -99,13 +99,10 @@ namespace STAR
                     if (oldS != newS)
                     {
                         if (watched.Contains(x))
-                        {
-                            
-                           OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, newS, x , y, index, surfaces.Length, width, height));
-                            
+                        {                            
+                           OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, newS, x , y, index, surfaces.Length, width, height));                            
                         }
                     }
-
                     surfaces[x] = newS;
                 }
             }
@@ -158,6 +155,35 @@ namespace STAR
                         if (watched.Contains(i))
                         {
                             OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, newS, i % width == 0 ? 1 : width, i / width == 0 ? 1 : width, i, surfaces.Length, width, height));
+                        }
+                    }
+                }
+            }
+        }
+
+        public void For(SurfaceTransformWithCoord a, int x, int y, int w, int h)
+        {
+            int right = x + w;
+            int bottom = y + h;
+
+            if (x > -1 && x < width && y > -1 && y < height && right < width && w > -1 && bottom < height && h > -1)
+            {
+                for (int u = 0; u < right; u++)
+                {
+                    for (int v = 0; v < bottom; v++)
+                    {
+                        int index = u + (v * width);
+
+                        Surface oldS = surfaces[index];
+                        a(ref surfaces[index], x, y);
+                        Surface newS = surfaces[index];
+
+                        if (oldS != newS)
+                        {
+                            if (watched.Contains(index))
+                            {
+                                OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, newS, i % width == 0 ? 1 : width, i / width == 0 ? 1 : width, i, surfaces.Length, width, height));
+                            }
                         }
                     }
                 }

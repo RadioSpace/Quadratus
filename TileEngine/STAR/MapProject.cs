@@ -116,42 +116,30 @@ namespace STAR
         #region tools
 
 
+        //todo change these to not be pass through
 
         public void ForAllCells(SurfaceTransform act)
         {
             cells.ForAll(act);
         }
 
-        public void ForCells(Action<MapSurface> act, int start, int length)
+        public void ForCells(SurfaceTransform act, int start, int length)
         {
-
-            if (start > -1 && (length + start) < cells.Length)
-            {
-                for (int x = start; x < length; x++)
-                {
-                    act(cells[x]);              
-                } 
-            }
+            cells.For(act, start, length);
         }
 
-
-        public void ForCells(Action<MapSurface> act, int x, int y, int width, int height)
+        public void ForCells(SurfaceTransformWithCoord act, int x, int y, int width, int height)
         {
-            int right = x + width;
-            int bottom = y + height;
-
-            for (int u = x; u < right; u++)
-            {
-                for (int v = y; y < bottom; y++)
-                {
-                    act(cells[u + (v * gridWidth)]);
-                }
-            }
+            cells.For(act, x, y, width, height);
         }
-
+        /////////////////////////////////////////////
         
         #endregion
 
 
     }
+
+
 }
+
+
