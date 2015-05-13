@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "textureCompositor", "textur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab01", "Lab01\Lab01.csproj", "{38A78551-635C-4510-B3F2-24FDB72311C2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileMapMaker", "TileMapMaker\TileMapMaker.csproj", "{21285DAB-7D2B-4B4C-96F2-6207F4D2FC7B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,16 @@ Global
 		{38A78551-635C-4510-B3F2-24FDB72311C2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{38A78551-635C-4510-B3F2-24FDB72311C2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{38A78551-635C-4510-B3F2-24FDB72311C2}.Release|Win32.ActiveCfg = Release|Any CPU
+		{21285DAB-7D2B-4B4C-96F2-6207F4D2FC7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21285DAB-7D2B-4B4C-96F2-6207F4D2FC7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21285DAB-7D2B-4B4C-96F2-6207F4D2FC7B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{21285DAB-7D2B-4B4C-96F2-6207F4D2FC7B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{21285DAB-7D2B-4B4C-96F2-6207F4D2FC7B}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{21285DAB-7D2B-4B4C-96F2-6207F4D2FC7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21285DAB-7D2B-4B4C-96F2-6207F4D2FC7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21285DAB-7D2B-4B4C-96F2-6207F4D2FC7B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{21285DAB-7D2B-4B4C-96F2-6207F4D2FC7B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{21285DAB-7D2B-4B4C-96F2-6207F4D2FC7B}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
