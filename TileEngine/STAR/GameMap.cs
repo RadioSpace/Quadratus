@@ -7,8 +7,11 @@ using System.Drawing;
 
 namespace STAR
 {
+    /// <summary>
+    /// the game world. max size is 1028 by 1028
+    /// </summary>
     [Serializable]
-    public class MapProject
+    public class GameMap
     {
         /// <summary>
         /// the file path of the texture data
@@ -79,7 +82,7 @@ namespace STAR
         /// <param name="GridWidth">the width in cells of the map</param>
         /// <param name="GridHeight">the height in cells of the map</param>
         /// <param name="CellSize">the size in pixels of each cell.  each cell is square</param>
-        public MapProject(string tdp,int GridWidth,int GridHeight,int CellSize = 24)
+        public GameMap(string tdp,int GridWidth,int GridHeight,int CellSize = 24)
         {
             texturedatapath = string.IsNullOrWhiteSpace(tdp) ? "null" : tdp;
             gridsize = new Size(GridWidth,GridHeight);
@@ -112,13 +115,21 @@ namespace STAR
             return  System.IO.Path.GetDirectoryName(texturedatapath) + "\\" + System.IO.Path.GetFileNameWithoutExtension(texturedatapath) + ".png";
         }
 
-
-        #region tools
-
-
-        //todo change these to not be pass through
+        /// <summary>
+        /// gets all the surfaces of the grid as an array
+        /// </summary>
+        /// <returns>A Surface array</returns>
+        public Surface[] GetSurfaces()
+        {
+            return cells.ToArray();
+        }
 
         public void ForAllCells(SurfaceTransform act)
+        {
+            cells.ForAll(act);
+        }
+
+        public void ForAllCells(SurfaceTransformWithCoord act)
         {
             cells.ForAll(act);
         }
@@ -132,10 +143,6 @@ namespace STAR
         {
             cells.For(act, x, y, width, height);
         }
-        /////////////////////////////////////////////
-        
-        #endregion
-
 
     }
 

@@ -14,13 +14,13 @@ namespace GAMETEST
         static void Main()
         {
 
-            MapCreate.MapProject project = new MapCreate.MapProject("C:\\Users\\daniel\\Desktop\\Eat the fail.cmp", 2, 2, 24);
+            STAR.GameMap project = new STAR.GameMap("C:\\Users\\daniel\\Desktop\\Eat the fail.cmp", 2, 2, 24);
 
 
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new STAR.GameShell(project.TextureDataPath,project.GetSurfaces(),project.gridWidth,project.gridHeight,project.cellSize,project.getPNGPath()));
+            Application.Run(new STAR.GameShell(project));
         }
     }
 }

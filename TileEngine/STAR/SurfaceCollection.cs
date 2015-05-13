@@ -13,6 +13,7 @@ namespace STAR
     [Serializable]
     public class SurfaceCollection : IEnumerable<Surface>
     {
+        static object locker = new object();
 
         Surface[] surfaces;
 
@@ -92,9 +93,15 @@ namespace STAR
                 {
                     int index = x + (y * width);
 
-                    Surface oldS = surfaces[index];
-                    a(ref surfaces[index]);
-                    Surface newS = surfaces[index];
+                    Surface oldS, newS;
+
+                    lock (locker)
+                    {
+                        oldS = surfaces[index];
+                        a(ref surfaces[index]);
+                        newS = surfaces[index];
+                    }
+
 
                     if (oldS != newS)
                     {
@@ -120,9 +127,14 @@ namespace STAR
                 {
                     int index = x + (y * width);
 
-                    Surface oldS = surfaces[index];
-                    a(ref surfaces[index], x, y);
-                    Surface newS = surfaces[index];
+                    Surface oldS, newS;
+
+                    lock (locker)
+                    {
+                        oldS = surfaces[index];
+                        a(ref surfaces[index],x,y);
+                        newS = surfaces[index];
+                    }
 
                     if (watched.Count > 0)
                     {
@@ -146,9 +158,14 @@ namespace STAR
             {
                 for (int i = start; i < end; i++)
                 {
-                    Surface oldS = surfaces[i];
-                    a(ref surfaces[i]);
-                    Surface newS = surfaces[i];
+                    Surface oldS, newS;
+
+                    lock (locker)
+                    {
+                        oldS = surfaces[i];
+                        a(ref surfaces[i]);
+                        newS = surfaces[i];
+                    }
 
                     if (oldS != newS)
                     {
@@ -174,15 +191,20 @@ namespace STAR
                     {
                         int index = u + (v * width);
 
-                        Surface oldS = surfaces[index];
-                        a(ref surfaces[index], x, y);
-                        Surface newS = surfaces[index];
+                        Surface oldS, newS;
+
+                        lock (locker)
+                        {
+                            oldS = surfaces[index];
+                            a(ref surfaces[index],u,v);
+                            newS = surfaces[index];
+                        }
 
                         if (oldS != newS)
                         {
                             if (watched.Contains(index))
                             {
-                                OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, newS, i % width == 0 ? 1 : width, i / width == 0 ? 1 : width, i, surfaces.Length, width, height));
+                                OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, newS, u,v,index, surfaces.Length, width, height));
                             }
                         }
                     }
@@ -205,9 +227,17 @@ namespace STAR
 
                 if(surfaces[index] != value)
                 {
-                    Surface oldS = surfaces[index];
-                    surfaces[index] = value;
+
+                    Surface oldS;
+
+                    lock (locker)
+                    {
+                        oldS = surfaces[index];
+                        surfaces[index] = value;
+                    }
+
                     OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, value, x, y, index, surfaces.Length, width, height));
+
                 }
             }
         }
@@ -219,18 +249,26 @@ namespace STAR
         /// <returns>a Surface of a cell on a grid</returns>
         public Surface this[int index]
         {
-            get { return surfaces[index]; }
+            get { lock (locker) { return surfaces[index]; } }
             set 
             {
-                if (surfaces[index] != value)
-                {
-                    Surface oldS = surfaces[index];
-                    surfaces[index] = value;
+                bool change;
+                lock(locker) change = surfaces[index] != value;
+
+                if (change)
+                {                    
+                    Surface oldS;
+                    lock (locker)
+                    {
+                        oldS = surfaces[index];
+                        surfaces[index] = value;
+                    }
+
+
                     if (width > 0)
                     {
                         OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, value, index % width, index / width, index, surfaces.Length, width, height));
                     }
-
                     else
                     {//width is zero so we won't do math
                         OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, value, 0, 0, index, surfaces.Length, width, height));

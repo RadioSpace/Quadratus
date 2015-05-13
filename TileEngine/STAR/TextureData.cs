@@ -13,22 +13,38 @@ namespace STAR
     [Serializable]
     public class TextureDataCollection : IList<TextureData>
     {
+
         List<TextureData> textures;
 
         TCoord cellunit;
+        /// <summary>
+        /// the unit vector of texture coordinates
+        /// </summary>
         public TCoord CellUnit { get { return cellunit; } }
 
-
+        //rename this field and recreate sample TDC's as this may break the old files on deserialization
         string texturename;
+        /// <summary>
+        /// the name of the TextureDataFile
+        /// </summary>
         public string TextureName { get { return texturename; } }
 
-
+        /// <summary>
+        /// creats a blank texture data collectino
+        /// </summary>
         public TextureDataCollection()
         {
             textures = new List<TextureData>();
             cellunit = new TCoord() { u = 0, v = 0 };
             texturename = "";
         }
+        /// <summary>
+        /// creates a texture datacollection from the specified data
+        /// </summary>
+        /// <param name="texname">the path of the texture data collection</param>
+        /// <param name="_u">the horizontal unit vector for the texcoord</param>
+        /// <param name="_v">the vertical unit vector for the texcood</param>
+        /// <param name="data">the texture data</param>
         public TextureDataCollection(string texname, float _u,float _v,params TextureData[] data)
         {
             textures = new List<TextureData>();
@@ -40,11 +56,20 @@ namespace STAR
         }
 
 
+        /// <summary>
+        /// gets the texture coordinates
+        /// </summary>
+        /// <returns>Vector2 Array filled with texture coordinates</returns>
         public Vector2[] GetTexCoords()
         {
             return this.Select(a => (Vector2)a.Texcoord).ToArray();
         }
 
+        /// <summary>
+        /// reads a serialized TextureDataCOllection from a file
+        /// </summary>
+        /// <param name="path">the path of the file to read</param>
+        /// <returns>a textureDataCollection from the file</returns>
         public static TextureDataCollection ReadCollection(string path)
         {
             TextureDataCollection tdc = new TextureDataCollection();
@@ -67,6 +92,11 @@ namespace STAR
             return tdc;
         }
 
+        /// <summary>
+        /// writes a TextureDataCollection
+        /// </summary>
+        /// <param name="path">the path to write to</param>
+        /// <param name="tdc">the TextureDataCollection to write</param>
         public static void WriteCollection(string path,TextureDataCollection tdc)
         {
             try

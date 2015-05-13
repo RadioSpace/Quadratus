@@ -61,7 +61,7 @@ namespace STAR
         float cellsize = 24;
 
         TextureDataCollection tdc;
-        SurfaceCollection surfaces;
+        GameMap map;
 
 
         int old_X;
@@ -81,14 +81,15 @@ namespace STAR
         #endregion
 
         
-        public GameShell(string cmpPath,Surface[] surfaceData,int cellsWide,int cellsHigh,int cellSize,string texturepath)
+        public GameShell(GameMap m)
         {
             InitializeComponent();
-            tdc = TextureDataCollection.ReadCollection(cmpPath);//test code!!! later this path will be passed in
-            surfaces = new SurfaceCollection(cellsWide, cellsHigh);
+            map = m;
+            tdc = TextureDataCollection.ReadCollection(map.TextureDataPath);
+            
 
 
-            InitializeGraphics( cellsWide, cellsHigh,texturepath);
+            InitializeGraphics(map.gridWidth,map.gridHeight,map.getPNGPath(),map.GetSurfaces());
 
             //start drawing
             System.Threading.Tasks.Task.Factory.StartNew(render);
@@ -98,7 +99,7 @@ namespace STAR
         }
 
 
-        void InitializeGraphics(int width,int height,string spritesheetpath)
+        void InitializeGraphics(int width,int height,string spritesheetpath,Surface[] surfaces)
         {
             #region generate data
 
@@ -160,12 +161,12 @@ namespace STAR
             //index buffer
             ib = SharpDX.Direct3D11.Buffer.Create(d, SharpDX.Direct3D11.BindFlags.IndexBuffer,indices);
 
-            surfacedata = SharpDX.Direct3D11.Buffer.Create(d,surfaces.ToArray(),new SharpDX.Direct3D11.BufferDescription()
+            surfacedata = SharpDX.Direct3D11.Buffer.Create(d,surfaces,new SharpDX.Direct3D11.BufferDescription()
             {
                 BindFlags = SharpDX.Direct3D11.BindFlags.ShaderResource,
                 CpuAccessFlags = SharpDX.Direct3D11.CpuAccessFlags.None,
                 OptionFlags = SharpDX.Direct3D11.ResourceOptionFlags.BufferStructured,
-                SizeInBytes = surfaces.SizeOf,
+                SizeInBytes = SharpDX.Utilities.SizeOf(surfaces),
                 StructureByteStride = System.Runtime.InteropServices.Marshal.SizeOf(typeof(Surface)),
                 Usage = SharpDX.Direct3D11.ResourceUsage.Default
             });
@@ -252,39 +253,7 @@ namespace STAR
 
             while (Power)
             {
-                ///////////////////////////////////////////////////////////////////////////////
-                //this is temporary till i figure out how i want the data to be updated/////////
-                ///////////////////////////////////////////////////////////////////////////////
-                ///////////////////////////////////////////////////////////////////////////////
-                lock (locker)
-                {
-                    if (change)
-                    {
-
-                        SharpDX.Matrix w = SharpDX.Matrix.Identity;
-                        w.Transpose();
-
-                        VArgs vargs = new VArgs() {world = w,cs = cellsize / 2f,glbTrans = newlook,texcoordbase = tdc.CellUnit};
-
-                        d.ImmediateContext.UpdateSubresource( ref vargs, Arg);
-
-                        
-                        SurfaceData[0].texindex = (uint)(SurfaceData[0].texindex == 0 ? 1 : 0);
-
-                        d.ImmediateContext.UpdateSubresource(SurfaceData, surfacedata);
-                        
-
-                        change = false;
-                    }
-
-
-                }
-                ///////////////////////////////////////////////////////////////////////////////
-                ///////////////////////////////////////////////////////////////////////////////
-                ///////////////////////////////////////////////////////////////////////////////
-                ///////////////////////////////////////////////////////////////////////////////
-                
-
+                //now we have the Gamemap object and it it ready to dynamically edit the surface data
 
                 //clear the screen
                 d.ImmediateContext.ClearRenderTargetView(targetveiw, SharpDX.Color.CornflowerBlue);
