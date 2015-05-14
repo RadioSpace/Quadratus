@@ -84,6 +84,9 @@ namespace STAR
         public GameShell(GameMap m)
         {
             InitializeComponent();
+
+            ClientSize = new System.Drawing.Size(640, 480);
+
             map = m;
             tdc = TextureDataCollection.ReadCollection(map.TextureDataPath);
             

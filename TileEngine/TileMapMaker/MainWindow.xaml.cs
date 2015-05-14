@@ -46,19 +46,29 @@ namespace TileMapMaker
             {
 
                 GameMap map = new GameMap(ofd.FileName, 2, 2);
-                System.Windows.Forms.Integration.WindowsFormsHost host = new System.Windows.Forms.Integration.WindowsFormsHost();
+                
 
                 shell = new GameShell(map);
                 shell.TopLevel = false;
-
-                host.Child = shell;
-                maingrid.Children.Add(host);
+                shell.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+                shell.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+                shell.AllowTransparency = true;
+                
+                WinHost.Child = shell; 
+              
+                
                 
             }
             else
             {//close for now until we get the game rendering in WPF
+                
                 Close();
             }
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            shell.Dispose();
         }
     }
 }
