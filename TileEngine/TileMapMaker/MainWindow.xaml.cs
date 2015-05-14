@@ -30,6 +30,8 @@ namespace TileMapMaker
         public MainWindow()
         {
             InitializeComponent();
+
+            
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -47,17 +49,15 @@ namespace TileMapMaker
 
                 GameMap map = new GameMap(ofd.FileName, 2, 2);
                 
-
                 shell = new GameShell(map);
                 shell.TopLevel = false;
                 shell.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
                 shell.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
                 shell.AllowTransparency = true;
                 
-                WinHost.Child = shell; 
-              
-                
-                
+                WinHost.Child = shell;
+
+                SetCommandBindings();
             }
             else
             {//close for now until we get the game rendering in WPF
@@ -65,6 +65,8 @@ namespace TileMapMaker
                 Close();
             }
         }
+
+
 
         private void Window_Closed(object sender, EventArgs e)
         {

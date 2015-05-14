@@ -1,18 +1,25 @@
 ﻿<Window x:Class="TileMapMaker.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"        
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"   
+        xmlns:d="clr-namespace:TileMapMaker.Commands"
         Title="MainWindow" 
         Height="720" Width="1280" 
         
         Loaded="Window_Loaded"  Closed="Window_Closed" 
                 
         >
-    
 
-    <Grid>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="MainStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+        <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="800"/>
-            <ColumnDefinition Width="480"/>
+            <ColumnDefinition Width="472"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -24,7 +31,19 @@
             <WindowsFormsHost Name="WinHost"/>
         </DockPanel>
         
-        
+        <DockPanel Grid.Column="1" Grid.Row="0" >
+            <Menu DockPanel.Dock="Right" Width="240" Background="DarkGray">
+                <MenuItem Name="ChangeTextureMenutItem"
+                          Command="{x:Static d:MapEditCommands.ChangeTexture}"
+                          Header="Change Texture"
+                          Style="{StaticResource TileEditMenuItemStyle}"/>
+            </Menu>
+            
+            <ListBox Name="ElementsList" DockPanel.Dock="Left" Background="Green">
+                
+            </ListBox>
+            
+        </DockPanel>
         
     </Grid>
 </Window>
