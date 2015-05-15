@@ -39,6 +39,7 @@
             this.Name = "GameShell";
             this.Text = "GameShell";
             this.Load += new System.EventHandler(this.GameShell_Load);
+            this.Click += new System.EventHandler(this.GameShell_Click);
             this.ResumeLayout(false);
 
         }

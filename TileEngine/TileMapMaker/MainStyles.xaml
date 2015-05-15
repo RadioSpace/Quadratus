@@ -2,11 +2,17 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     
     
-    <Style x:Key="TileEditMenuItemStyle" TargetType="MenuItem" >
+    <Style x:Key="TEMenuItemStyle" TargetType="MenuItem" >
         <Setter Property="FontFamily" Value="Courier New"/>
-        <Setter Property="FontSize" Value="14"/>        
-        <Setter Property="Background" Value="LightGray"/>
-        
+        <Setter Property="FontSize" Value="18"/>        
+        <Setter Property="Background" Value="LightGray"/>              
     </Style>
+    
+    <Style x:Key="TEMenuItemHeaderStyle" TargetType="TextBlock">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+
 
 </ResourceDictionary>

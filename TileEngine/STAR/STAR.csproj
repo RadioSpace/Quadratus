@@ -70,6 +70,7 @@
       <DependentUpon>GameShell.cs</DependentUpon>
     </Compile>
     <Compile Include="GameMap.cs" />
+    <Compile Include="GameShellMouseClickEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Surface.cs" />
     <Compile Include="SurfaceCollection.cs" />

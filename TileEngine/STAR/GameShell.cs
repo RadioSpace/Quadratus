@@ -76,12 +76,50 @@ namespace STAR
 
         bool cellupdate = false;
 
-
+        bool editgamemode = false;
 
         #endregion
 
-        
-        public GameShell(GameMap m)
+
+        #region events
+
+        EventHandler<GameShellMouseClickEventArgs> gameclick;
+        /// <summary>
+        /// used is the gameshell is in editmode
+        /// </summary>
+        public event EventHandler<GameShellMouseClickEventArgs> GameClick
+        {
+            add 
+            {
+                lock (locker)
+                {
+                    if (editgamemode)
+                    {
+                        gameclick += value;
+                    }
+                }
+            }
+            remove
+            {
+                lock (locker)
+                {
+                    if (gameclick != null)
+                    {
+                        if (gameclick.GetInvocationList().Contains(value))
+                        {
+                            gameclick -= value;
+                        }
+                    }
+                }
+            }
+        }
+
+        protected virtual void OnGameClick(GameShellMouseClickEventArgs e) { if (gameclick != null)gameclick(this, e); }
+
+        #endregion
+
+
+        public GameShell(GameMap m , bool editmode = false)
         {
             InitializeComponent();
 
@@ -97,7 +135,7 @@ namespace STAR
             //start drawing
             System.Threading.Tasks.Task.Factory.StartNew(render);
 
-            
+            editgamemode = false;
                         
         }
 
@@ -302,6 +340,9 @@ namespace STAR
 
 
         #region onMouse
+
+        //these are for scrolling and were initially for testing 
+
         protected override void OnMouseDown(MouseEventArgs e)
         {
             if (firstcatch)
@@ -355,6 +396,19 @@ namespace STAR
 
         public void updatesurface(Surface[] surfaces)
         {
+            
+        }
+
+
+
+        private void GameShell_Click(object sender, EventArgs e)
+        {
+            //get the mouse pos
+
+            //find the cell at that position
+
+            //fire the mouse click event
+            OnGameClick(new GameShellMouseClickEventArgs(new Surface(SharpDX.Vector3.Zero, SharpDX.Vector3.Zero, 0)));//testing that gameshell gets the mouseclick through the wpf editor
             
         }
 

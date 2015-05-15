@@ -49,12 +49,13 @@ namespace TileMapMaker
 
                 GameMap map = new GameMap(ofd.FileName, 2, 2);
                 
-                shell = new GameShell(map);
+                shell = new GameShell(map,true);
                 shell.TopLevel = false;
                 shell.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
                 shell.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
                 shell.AllowTransparency = true;
-                
+                shell.GameClick += shell_GameClick;
+
                 WinHost.Child = shell;
 
                 SetCommandBindings();
@@ -64,6 +65,11 @@ namespace TileMapMaker
                 
                 Close();
             }
+        }
+
+        void shell_GameClick(object sender, GameShellMouseClickEventArgs e)
+        {
+            MessageBox.Show("gameClickWorks");
         }
 
 

@@ -38,7 +38,9 @@ namespace TileMapMaker
 
         void TextureChangeOperation(object sender,ExecutedRoutedEventArgs args )
         {
-            MessageBox.Show("works");
+            //load a menu
+            //set an edit mode on the gamemap?
+           
         }
 
        

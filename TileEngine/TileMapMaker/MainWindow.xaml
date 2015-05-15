@@ -4,11 +4,18 @@
         xmlns:d="clr-namespace:TileMapMaker.Commands"
         Title="MainWindow" 
         Height="720" Width="1280" 
-        
-        Loaded="Window_Loaded"  Closed="Window_Closed" 
-                
+        ResizeMode="NoResize"
+        Loaded="Window_Loaded"  Closed="Window_Closed"             
         >
 
+    
+    <!--
+    
+    the 
+    
+    
+    
+    -->
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -19,7 +26,7 @@
         <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="800"/>
-            <ColumnDefinition Width="472"/>
+            <ColumnDefinition Width="480"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -32,11 +39,28 @@
         </DockPanel>
         
         <DockPanel Grid.Column="1" Grid.Row="0" >
-            <Menu DockPanel.Dock="Right" Width="240" Background="DarkGray">
-                <MenuItem Name="ChangeTextureMenutItem"
-                          Command="{x:Static d:MapEditCommands.ChangeTexture}"
-                          Header="Change Texture"
-                          Style="{StaticResource TileEditMenuItemStyle}"/>
+            
+            <Menu DockPanel.Dock="Right"  Background="DarkGray" HorizontalContentAlignment="Stretch">
+                
+                <Menu.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel HorizontalAlignment="Stretch">
+                            
+                        </StackPanel>
+                    </ItemsPanelTemplate>
+                </Menu.ItemsPanel>               
+                
+                
+                <Menu.Items>
+                    
+                    <MenuItem Name="ChangeTextureMenutItem"
+                          Command="{x:Static d:MapEditCommands.ChangeTexture}"                    
+                          Style="{StaticResource TEMenuItemStyle}">
+                        <MenuItem.Header>
+                            <TextBlock Text="Change Texture" Style="{StaticResource TEMenuItemHeaderStyle}"/>
+                        </MenuItem.Header>
+                    </MenuItem>  
+                </Menu.Items>                
             </Menu>
             
             <ListBox Name="ElementsList" DockPanel.Dock="Left" Background="Green">
