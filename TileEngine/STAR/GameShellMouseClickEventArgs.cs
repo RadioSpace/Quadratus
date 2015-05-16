@@ -9,7 +9,10 @@ namespace STAR
     {
 
         public readonly Surface surfaceFromGame;//maybe should be an array for layered surfaces?
-       
+
+        public readonly SharpDX.Vector2 mpos;
+
+
         Surface surfaceForGame;
         bool IsSurfaceSet = false;
         public void SetGameSurface(Surface surface)
@@ -21,9 +24,10 @@ namespace STAR
             }
         }
 
-        public GameShellMouseClickEventArgs(Surface surface)
+        public GameShellMouseClickEventArgs(Surface surface,SharpDX.Vector2 pos)
         {
             surfaceFromGame = surface;
+            mpos = pos;
         }
 
 

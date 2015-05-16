@@ -13,14 +13,12 @@ namespace GAMETEST
         [STAThread]
         static void Main()
         {
-
-            STAR.GameMap project = new STAR.GameMap("C:\\Users\\daniel\\Desktop\\Eat the fail.cmp", 2, 2, 24);
-
-
-
+            STAR.GameMap project = new STAR.GameMap("C:\\Users\\daniel\\Desktop\\Eat the fail.cmp", 4, 6, 24);
+            
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new STAR.GameShell(project));
+
         }
     }
 }

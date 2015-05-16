@@ -12,6 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using System.Windows.Forms.Integration;
+
 using STAR;
 
 namespace TileMapMaker
@@ -55,13 +57,13 @@ namespace TileMapMaker
                 shell.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
                 shell.AllowTransparency = true;
                 shell.GameClick += shell_GameClick;
-
-                WinHost.Child = shell;
+                
+                WinHost.Child = shell;   
 
                 SetCommandBindings();
             }
             else
-            {//close for now until we get the game rendering in WPF
+            {//close for now 
                 
                 Close();
             }
@@ -76,7 +78,10 @@ namespace TileMapMaker
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            shell.Close();
             shell.Dispose();
         }
+
+
     }
 }

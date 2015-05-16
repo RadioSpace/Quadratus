@@ -17,11 +17,13 @@ namespace STAR
         /// the file path of the texture data
         /// </summary>
         string texturedatapath;
+
         /// <summary>
         /// gets the file path of the texture data if the texture has data
         /// </summary>
         /// <remarks>returns null if texturedatapath equals "null"... texturedatapath equals "null" by default</remarks>
         public string TextureDataPath { get { return HasTextureDataPath ? texturedatapath : null; } }
+
         /// <summary>
         /// true if the texture has data, false if not
         /// </summary>
@@ -31,10 +33,12 @@ namespace STAR
         /// the size in cells of the map grid
         /// </summary>
         Size gridsize;
+
         /// <summary>
         /// gets the width in cells of the map grid
         /// </summary>
         public int gridWidth { get { return gridsize.Width; } }
+
         /// <summary>
         /// gets the height in cells of the map grid
         /// </summary>
@@ -44,6 +48,7 @@ namespace STAR
         /// the cell size in pixels
         /// </summary>
         int cellsize;//standard is 24x24
+
         /// <summary>
         /// gets the cell width and height in pixels
         /// all cells are square
@@ -56,6 +61,7 @@ namespace STAR
         /// </summary>
         /// <remarks>SLOW</remarks>
         public int gridPXWidth { get { return gridsize.Width * cellsize; } }
+
         /// <summary>
         /// gets the product of the grid height and the cell height
         /// </summary>
@@ -67,6 +73,7 @@ namespace STAR
         /// </summary>
         ///  <remarks>SLOW</remarks>
         public int gridArea { get { return gridsize.Width * gridsize.Height; } }
+
         /// <summary>
         /// gets the product of the grid pixel width and the grid pixel height
         /// </summary>
@@ -74,6 +81,12 @@ namespace STAR
         public int gridAreaPX { get { return gridPXWidth * gridPXHeight; } }
 
         SurfaceCollection cells;
+
+        public Surface this[int x, int y]
+        {
+            get { return cells[x, y]; }
+        }
+
 
         /// <summary>
         /// creates the data need to display a map
@@ -124,22 +137,40 @@ namespace STAR
             return cells.ToArray();
         }
 
+        /// <summary>
+        /// performs an operation on all cells
+        /// </summary>
+        /// <param name="act">the act to perform</param>
         public void ForAllCells(SurfaceTransform act)
         {
             cells.ForAll(act);
         }
 
+        /// <summary>
+        /// performs an operation on all cells
+        /// </summary>
+        /// <param name="act">the act to perform</param>
+        /// <remarks>provides location data</remarks>
         public void ForAllCells(SurfaceTransformWithCoord act)
         {
             cells.ForAll(act);
         }
 
-        public void ForCells(SurfaceTransform act, int start, int length)
+        /// <summary>
+        /// performs an operation on specified cells
+        /// </summary>
+        /// <param name="act">the act to perform</param>
+        public void ForCells( int start, int length,SurfaceTransform act)
         {
             cells.For(act, start, length);
         }
 
-        public void ForCells(SurfaceTransformWithCoord act, int x, int y, int width, int height)
+        /// <summary>
+        /// performs an operation on specified cells
+        /// </summary>
+        /// <param name="act">the act to perform</param>
+        /// <remarks>provides location data</remarks>
+        public void ForCells(int x, int y, int width, int height, SurfaceTransformWithCoord act)
         {
             cells.For(act, x, y, width, height);
         }

@@ -5,17 +5,8 @@
         Title="MainWindow" 
         Height="720" Width="1280" 
         ResizeMode="NoResize"
-        Loaded="Window_Loaded"  Closed="Window_Closed"             
-        >
+        Loaded="Window_Loaded"  Closed="Window_Closed">
 
-    
-    <!--
-    
-    the 
-    
-    
-    
-    -->
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -26,7 +17,7 @@
         <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="800"/>
-            <ColumnDefinition Width="480"/>
+            <ColumnDefinition Width="460"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -56,10 +47,12 @@
                     <MenuItem Name="ChangeTextureMenutItem"
                           Command="{x:Static d:MapEditCommands.ChangeTexture}"                    
                           Style="{StaticResource TEMenuItemStyle}">
+                        
                         <MenuItem.Header>
                             <TextBlock Text="Change Texture" Style="{StaticResource TEMenuItemHeaderStyle}"/>
                         </MenuItem.Header>
-                    </MenuItem>  
+                        
+                    </MenuItem>
                 </Menu.Items>                
             </Menu>
             

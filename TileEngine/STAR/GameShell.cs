@@ -85,7 +85,7 @@ namespace STAR
 
         EventHandler<GameShellMouseClickEventArgs> gameclick;
         /// <summary>
-        /// used is the gameshell is in editmode
+        /// used when the gameshell is in editmode
         /// </summary>
         public event EventHandler<GameShellMouseClickEventArgs> GameClick
         {
@@ -135,7 +135,7 @@ namespace STAR
             //start drawing
             System.Threading.Tasks.Task.Factory.StartNew(render);
 
-            editgamemode = false;
+            editgamemode = editmode;
                         
         }
 
@@ -294,7 +294,7 @@ namespace STAR
 
             while (Power)
             {
-                //now we have the Gamemap object and it it ready to dynamically edit the surface data
+                //now we have the Gamemap object and it is ready to dynamically edit the surface data
 
                 //clear the screen
                 d.ImmediateContext.ClearRenderTargetView(targetveiw, SharpDX.Color.CornflowerBlue);
@@ -394,22 +394,33 @@ namespace STAR
         }
 
 
-        public void updatesurface(Surface[] surfaces)
-        {
-            
-        }
 
 
 
-        private void GameShell_Click(object sender, EventArgs e)
-        {
-            //get the mouse pos
+
+        private void GameShell_MouseDown(object sender, MouseEventArgs e)
+        {   
+
+            //it is time to straighten out my grid
+
 
             //find the cell at that position
+            Point p = e.Location;
+            
+            int x = (p.X + (ClientSize.Width / 2) )/ map.cellSize;
+            int y = (p.Y + (ClientSize.Height / 2)) / map.cellSize;
+
 
             //fire the mouse click event
-            OnGameClick(new GameShellMouseClickEventArgs(new Surface(SharpDX.Vector3.Zero, SharpDX.Vector3.Zero, 0)));//testing that gameshell gets the mouseclick through the wpf editor
-            
+            try
+            {
+                OnGameClick(
+                    new GameShellMouseClickEventArgs(
+                        map[x, y],//not safe
+                            new SharpDX.Vector2(e.X, e.Y)//mouse pos
+                            ));
+            }
+            catch { MessageBox.Show("mousepos Failed: x:" + x + " y:" + y); }
         }
 
     }
