@@ -57,11 +57,11 @@ VS_OUT main( uint v_id : SV_VertexID )
 	//dynamic quad                                                //pos,  tex                   pos,  tex                                     pos,  tex                  pos,  tex
 	float4 postex = (v_id & 2)?
 	((v_id % 2 )? /*<2>*/
-		float4(-cs,-cs,  1,1): /*1,2*/
-	    float4(cs,-cs,  0,1) ):/*0,2*/
+		float4(cs,cs,  1,1): /*1,2*/
+	    float4(-cs,cs,  0,1) ):/*0,2*/
 	((v_id % 2)?/*<0>*/
-		float4(-cs,cs,  1,0) :/*1,0*/
-	    float4(cs,cs,  0,0));/*0,0*/
+		float4(cs,-cs,  1,0) :/*1,0*/
+	    float4(-cs,-cs,  0,0));/*0,0*/
 
 
 	float3 pos = float3(postex.x,postex.y,0);

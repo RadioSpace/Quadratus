@@ -13,8 +13,12 @@ namespace GAMETEST
         [STAThread]
         static void Main()
         {
-            STAR.GameMap project = new STAR.GameMap("C:\\Users\\daniel\\Desktop\\Eat the fail.cmp", 4, 6, 24);
-            
+            STAR.GameMap project = new STAR.GameMap("dev1.cmp", 10,2, 24);
+
+            project.ForCells(0, 0, (ref STAR.Surface s) => { s.texindex = 1; });
+
+            project.ForCells(19, 0, (ref STAR.Surface s) => { s.texindex = 2; });
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new STAR.GameShell(project));

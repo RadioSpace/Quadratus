@@ -6,19 +6,19 @@
         <StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label Content="cell width:        "/>
-                <TextBox Name="cellwidthTextBox" Width="45"/>
+                <TextBox Name="cellwidthTextBox" Width="45" ToolTip="the width of each cell"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label Content="cell height height:"/>
-                <TextBox Name="cellheightTextBox" Width="45"/>
+                <TextBox Name="cellheightTextBox" Width="45" ToolTip="the height of each cell"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label Content="texture width:    "/>
-                <TextBox Name="texwidthTextBox" Width="45"/>
+                <TextBox Name="texwidthTextBox" Width="45" ToolTip="the width of the final texture. NOTE: keep this greater than the cell width"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label Content="texture height:   "/>
-                <TextBox Name="texheightTextBox" Width="45"/>
+                <TextBox Name="texheightTextBox" Width="45" ToolTip="the height of the  final texture. NOTE: keep this greater than the cell height"/>
             </StackPanel>
             
             <Button Name="okayButton" Click="okayButton_Click" Content="OKAY" FontSize="22"/>

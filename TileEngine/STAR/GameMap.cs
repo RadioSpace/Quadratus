@@ -124,8 +124,10 @@ namespace STAR
         /// </summary>
         /// <returns>a png file path</returns>
         public string getPNGPath()
-        {  
-            return  System.IO.Path.GetDirectoryName(texturedatapath) + "\\" + System.IO.Path.GetFileNameWithoutExtension(texturedatapath) + ".png";
+        {
+            string dirname = System.IO.Path.GetDirectoryName(texturedatapath);
+
+            return (string.IsNullOrWhiteSpace(dirname) ? "" : dirname  + "\\") + System.IO.Path.GetFileNameWithoutExtension(texturedatapath) + ".png";
         }
 
         /// <summary>

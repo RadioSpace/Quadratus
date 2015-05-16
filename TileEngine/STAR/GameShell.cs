@@ -164,15 +164,27 @@ namespace STAR
                 indices[x + 5] = 3 + y;
             }       
 
-            SharpDX.Matrix p = SharpDX.Matrix.PerspectiveLH(this.ClientSize.Width,this.ClientSize.Height, 1, 201);
-            SharpDX.Matrix v = SharpDX.Matrix.LookAtLH(new SharpDX.Vector3(0, 0, 100), SharpDX.Vector3.Zero, SharpDX.Vector3.UnitY);
+            //SharpDX.Matrix p = SharpDX.Matrix.PerspectiveLH(this.ClientSize.Width,this.ClientSize.Height, 1, 201);
+            //SharpDX.Matrix v = SharpDX.Matrix.LookAtLH(new SharpDX.Vector3(0, 0, 100), SharpDX.Vector3.Zero, SharpDX.Vector3.UnitY);
+            //SharpDX.Matrix w = SharpDX.Matrix.Identity;
+
+            SharpDX.Matrix p = SharpDX.Matrix.OrthoOffCenterLH(0, ClientSize.Width, ClientSize.Height, 0, 1, 2);
+            SharpDX.Matrix v = SharpDX.Matrix.LookAtLH(new SharpDX.Vector3(0,0, -1), SharpDX.Vector3.Zero, SharpDX.Vector3.UnitY);
             SharpDX.Matrix w = SharpDX.Matrix.Identity;
 
             p.Transpose();
             v.Transpose();
             w.Transpose();
 
-            VArgs va = new VArgs(){world = w, glbTrans = SharpDX.Vector3.Zero,cs = cellsize / 2f, texcoordbase = tdc.CellUnit };
+            VArgs va = new VArgs() 
+            { 
+                world = w, 
+                glbTrans = new SharpDX.Vector3(
+                    (-ClientSize.Width / 2) + (map.cellSize/2),
+                    (-ClientSize.Height / 2) + (map.cellSize/2),
+                    0),
+                cs = cellsize / 2f, texcoordbase = tdc.CellUnit
+            };
 
             #endregion
 
@@ -392,23 +404,20 @@ namespace STAR
         {
 
         }
-
-
-
-
+        
 
 
         private void GameShell_MouseDown(object sender, MouseEventArgs e)
         {   
 
             //it is time to straighten out my grid
-
+            Point p = PointToClient(e.Location);
 
             //find the cell at that position
-            Point p = e.Location;
             
-            int x = (p.X + (ClientSize.Width / 2) )/ map.cellSize;
-            int y = (p.Y + (ClientSize.Height / 2)) / map.cellSize;
+            
+            int x = e.X / map.cellSize;
+            int y = e.Y / map.cellSize;
 
 
             //fire the mouse click event

@@ -152,11 +152,11 @@ namespace STAR
             }
         }
 
-        public void For(SurfaceTransform a, int start, int end)
+        public void For(SurfaceTransform a, int start, int len)
         {
-            if (start > -1 && start + end < Length && end > start)
+            if ((start > -1) && ((start + len) < Length) && (len > -1))
             {
-                for (int i = start; i < end; i++)
+                for (int i = start; i <= (start + len); i++)
                 {
                     Surface oldS, newS;
 
@@ -212,6 +212,13 @@ namespace STAR
             }
         }
 
+        TResult burp<EXCEP,TResult>() where EXCEP : Exception
+        {
+            EXCEP exp = (EXCEP)Activator.CreateInstance(typeof(EXCEP));
+
+            throw exp;
+        }
+
         /// <summary>
         /// Gets or Sets the cell at the specified coordinates
         /// </summary>
@@ -220,7 +227,7 @@ namespace STAR
         /// <returns>a Surface of a cell on a grid</returns>
         public Surface this[int x,int y]
         {
-            get { return surfaces[x + (y * width)]; }
+            get { return x < width ? surfaces[x + (y * width)] : burp<IndexOutOfRangeException,Surface>() ; }
             set
             {
                 int index = x + (y * width);
