@@ -26,6 +26,7 @@ namespace TileMapMaker
     public partial class MainWindow : Window
     {
         GameShell shell;
+   
         
        
 
@@ -33,6 +34,8 @@ namespace TileMapMaker
         {
             InitializeComponent();
 
+            cellProps = new ContextMenu();
+            
             
         }
 
@@ -46,10 +49,12 @@ namespace TileMapMaker
             ofd.Multiselect = false;
             ofd.Title = "select the TextureData to use with the map";
 
+            
+
             if (ofd.ShowDialog() ?? false)
             {
 
-                GameMap map = new GameMap(ofd.FileName, 2, 2);
+                GameMap map = new GameMap(ofd.FileName, 10, 10);
                 
                 shell = new GameShell(map,true);
                 shell.TopLevel = false;
@@ -71,15 +76,44 @@ namespace TileMapMaker
 
         void shell_GameClick(object sender, GameShellMouseClickEventArgs e)
         {
-            MessageBox.Show("gameClickWorks");
+            
+            if (e.MouseArgs.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                ResetCellProps(e.surfaceFromGame.color.ToString(), e.surfaceFromGame.texindex.ToString(), e.surfaceFromGame.trans.ToString());
+                cellProps.IsOpen = true;
+            }
+            else
+            {
+               
+                e.SetGameSurface(new Surface(e.surfaceFromGame.trans, SharpDX.Vector3.One,1));//test code
+            }
+
+
+
         }
 
 
+        void ResetCellProps(params string[] props)
+        {
+            cellProps.Items.Clear();
+
+            foreach(string prop in props)
+            {
+                cellProps.Items.Add(prop);
+            }
+        }
+
+        
 
         private void Window_Closed(object sender, EventArgs e)
         {
             shell.Close();
             shell.Dispose();
+        }
+
+        private void cellProps_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+
         }
 
 

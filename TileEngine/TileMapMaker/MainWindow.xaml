@@ -14,19 +14,28 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-        <Grid>
+    
+    
+    <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="800"/>
-            <ColumnDefinition Width="460"/>
+            <ColumnDefinition Width="640"/>
+            <ColumnDefinition Width="480"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="600"/>
+            <RowDefinition Height="480"/>
             <RowDefinition Height="120"/>
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Column="0" Grid.Row="0">
-            <WindowsFormsHost Name="WinHost"/>
+            <WindowsFormsHost Name="WinHost">
+                <WindowsFormsHost.ContextMenu>
+                    <ContextMenu Name="cellProps"   ContextMenuOpening="cellProps_ContextMenuOpening">
+                        <MenuItem Header="h"/>
+                    </ContextMenu>
+                </WindowsFormsHost.ContextMenu>
+
+            </WindowsFormsHost>
         </DockPanel>
         
         <DockPanel Grid.Column="1" Grid.Row="0" >
@@ -40,7 +49,7 @@
                         </StackPanel>
                     </ItemsPanelTemplate>
                 </Menu.ItemsPanel>               
-                
+
                 
                 <Menu.Items>
                     

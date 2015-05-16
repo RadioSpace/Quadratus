@@ -177,6 +177,12 @@ namespace STAR
             cells.For(act, x, y, width, height);
         }
 
+        public void SetCell(int x , int y, Surface s)
+        {
+            cells.SetCellValue(x + (y * gridWidth), new SharpDX.Color(s.color), s.texindex, s.trans);
+        }
+
+
     }
 
 

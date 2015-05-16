@@ -123,7 +123,7 @@ namespace STAR
         {
             InitializeComponent();
 
-            ClientSize = new System.Drawing.Size(640, 480);
+            //ClientSize = new System.Drawing.Size(640, 480);
 
             map = m;
             tdc = TextureDataCollection.ReadCollection(map.TextureDataPath);
@@ -307,6 +307,12 @@ namespace STAR
             while (Power)
             {
                 //now we have the Gamemap object and it is ready to dynamically edit the surface data
+                if (change)
+                {
+                    d.ImmediateContext.UpdateSubresource(map.GetSurfaces(), surfacedata);
+                    change = false;
+                }
+
 
                 //clear the screen
                 d.ImmediateContext.ClearRenderTargetView(targetveiw, SharpDX.Color.CornflowerBlue);
@@ -404,32 +410,42 @@ namespace STAR
         {
 
         }
-        
+
 
 
         private void GameShell_MouseDown(object sender, MouseEventArgs e)
-        {   
+        {
 
             //it is time to straighten out my grid
-            Point p = PointToClient(e.Location);
+            Point p = e.Location;
 
             //find the cell at that position
-            
-            
-            int x = e.X / map.cellSize;
-            int y = e.Y / map.cellSize;
 
+            
+            int x = p.X / map.cellSize;
+            int y = p.Y / map.cellSize;
+            STAR.Surface s;
 
             //fire the mouse click event
             try
             {
-                OnGameClick(
-                    new GameShellMouseClickEventArgs(
-                        map[x, y],//not safe
-                            new SharpDX.Vector2(e.X, e.Y)//mouse pos
-                            ));
+                s = map[x, y];
             }
-            catch { MessageBox.Show("mousepos Failed: x:" + x + " y:" + y); }
+            catch
+            {
+                s = new Surface(SharpDX.Vector3.Zero, SharpDX.Vector3.Zero, 0);
+            }
+
+            GameShellMouseClickEventArgs args = new GameShellMouseClickEventArgs(s,new SharpDX.Vector2(x, y),e);
+
+            OnGameClick(args);
+
+            if (args.IsSurfaceSet)
+            { 
+                map.ForCells(x,y,1,1,(ref Surface sur,int u,int v)=>{sur = args.SurfaceForgame; });
+                change = true;
+            }
+
         }
 
     }

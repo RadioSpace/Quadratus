@@ -183,11 +183,11 @@ namespace STAR
             int right = x + w;
             int bottom = y + h;
 
-            if (x > -1 && x < width && y > -1 && y < height && right < width && w > -1 && bottom < height && h > -1)
+            if (x > -1 && x < width && y > -1 && y < height && right <= width && w > -1 && bottom <= height && h > -1)
             {
-                for (int u = 0; u < right; u++)
+                for (int u = x; u < right; u++)
                 {
-                    for (int v = 0; v < bottom; v++)
+                    for (int v = y; v < bottom; v++)
                     {
                         int index = u + (v * width);
 
@@ -196,7 +196,7 @@ namespace STAR
                         lock (locker)
                         {
                             oldS = surfaces[index];
-                            a(ref surfaces[index],u,v);
+                            a(ref surfaces[index], u, v);
                             newS = surfaces[index];
                         }
 
@@ -204,12 +204,14 @@ namespace STAR
                         {
                             if (watched.Contains(index))
                             {
-                                OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, newS, u,v,index, surfaces.Length, width, height));
+                                OnWatchedSurfaceChanged(new SurfaceEventArgs(oldS, newS, u, v, index, surfaces.Length, width, height));
                             }
                         }
                     }
                 }
             }
+
+        
         }
 
         TResult burp<EXCEP,TResult>() where EXCEP : Exception
