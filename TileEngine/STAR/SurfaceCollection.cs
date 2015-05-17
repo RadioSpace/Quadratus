@@ -15,7 +15,7 @@ namespace STAR
     {
         static object locker = new object();
 
-        Surface[] surfaces;
+        protected Surface[] surfaces;
 
         int width;
         /// <summary>

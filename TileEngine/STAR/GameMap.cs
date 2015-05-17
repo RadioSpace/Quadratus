@@ -11,7 +11,7 @@ namespace STAR
     /// the game world. max size is 1028 by 1028
     /// </summary>
     [Serializable]
-    public class GameMap
+    public class GameMap : SurfaceCollection
     {
         /// <summary>
         /// the file path of the texture data
@@ -80,13 +80,6 @@ namespace STAR
         ///  <remarks>SLOW</remarks>
         public int gridAreaPX { get { return gridPXWidth * gridPXHeight; } }
 
-        SurfaceCollection cells;
-
-        public Surface this[int x, int y]
-        {
-            get { return cells[x, y]; }
-        }
-
 
         /// <summary>
         /// creates the data need to display a map
@@ -95,13 +88,11 @@ namespace STAR
         /// <param name="GridWidth">the width in cells of the map</param>
         /// <param name="GridHeight">the height in cells of the map</param>
         /// <param name="CellSize">the size in pixels of each cell.  each cell is square</param>
-        public GameMap(string tdp,int GridWidth,int GridHeight,int CellSize = 24)
+        public GameMap(string tdp,int GridWidth,int GridHeight,int CellSize = 24) : base(GridWidth,GridHeight)
         {
             texturedatapath = string.IsNullOrWhiteSpace(tdp) ? "null" : tdp;
             gridsize = new Size(GridWidth,GridHeight);
-            cellsize = CellSize;
-
-            cells = new SurfaceCollection(GridWidth,GridHeight);
+            cellsize = CellSize;           
 
             for (int _u = 0; _u < gridsize.Width; _u++)
             {
@@ -114,7 +105,7 @@ namespace STAR
                     newcell.texindex = 0;
                     newcell.trans = new SharpDX.Vector3(_u * cellsize, _v * cellsize, 0);
 
-                    cells[index] = newcell;
+                    surfaces[index] = newcell;
                 }
             }
         }
@@ -136,53 +127,8 @@ namespace STAR
         /// <returns>A Surface array</returns>
         public Surface[] GetSurfaces()
         {
-            return cells.ToArray();
+            return surfaces.ToArray();
         }
-
-        /// <summary>
-        /// performs an operation on all cells
-        /// </summary>
-        /// <param name="act">the act to perform</param>
-        public void ForAllCells(SurfaceTransform act)
-        {
-            cells.ForAll(act);
-        }
-
-        /// <summary>
-        /// performs an operation on all cells
-        /// </summary>
-        /// <param name="act">the act to perform</param>
-        /// <remarks>provides location data</remarks>
-        public void ForAllCells(SurfaceTransformWithCoord act)
-        {
-            cells.ForAll(act);
-        }
-
-        /// <summary>
-        /// performs an operation on specified cells
-        /// </summary>
-        /// <param name="act">the act to perform</param>
-        public void ForCells( int start, int length,SurfaceTransform act)
-        {
-            cells.For(act, start, length);
-        }
-
-        /// <summary>
-        /// performs an operation on specified cells
-        /// </summary>
-        /// <param name="act">the act to perform</param>
-        /// <remarks>provides location data</remarks>
-        public void ForCells(int x, int y, int width, int height, SurfaceTransformWithCoord act)
-        {
-            cells.For(act, x, y, width, height);
-        }
-
-        public void SetCell(int x , int y, Surface s)
-        {
-            cells.SetCellValue(x + (y * gridWidth), new SharpDX.Color(s.color), s.texindex, s.trans);
-        }
-
-
     }
 
 
