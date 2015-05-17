@@ -152,7 +152,7 @@ namespace STAR
             }
         }
 
-        public void For(SurfaceTransform a, int start, int len)
+        public void For(int start, int len,SurfaceTransform a)
         {
             if ((start > -1) && ((start + len) < Length) && (len > -1))
             {
@@ -178,7 +178,7 @@ namespace STAR
             }
         }
 
-        public void For(SurfaceTransformWithCoord a, int x, int y, int w, int h)
+        public void For(int x, int y, int w, int h,SurfaceTransformWithCoord a)
         {
             int right = x + w;
             int bottom = y + h;

@@ -60,7 +60,7 @@ namespace TileMapMaker
                 shell.TopLevel = false;
                 shell.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
                 shell.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-                shell.AllowTransparency = true;
+                shell.AllowTransparency = true;                
                 shell.GameClick += shell_GameClick;
                 
                 WinHost.Child = shell;   

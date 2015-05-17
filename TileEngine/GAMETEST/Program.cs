@@ -15,9 +15,9 @@ namespace GAMETEST
         {
             STAR.GameMap project = new STAR.GameMap("dev1.cmp", 10,2, 24);
 
-            project.ForCells(0, 0, (ref STAR.Surface s) => { s.texindex = 1; });
+            project.For(0, 0, (ref STAR.Surface s) => { s.texindex = 1; });
 
-            project.ForCells(19, 0, (ref STAR.Surface s) => { s.texindex = 2; });
+            project.For(19, 0, (ref STAR.Surface s) => { s.texindex = 2; });
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

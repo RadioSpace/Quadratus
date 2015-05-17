@@ -162,11 +162,9 @@ namespace STAR
                 indices[x + 3] = 2 + y;
                 indices[x + 4] = 1 + y;
                 indices[x + 5] = 3 + y;
-            }       
+            }     
 
-            //SharpDX.Matrix p = SharpDX.Matrix.PerspectiveLH(this.ClientSize.Width,this.ClientSize.Height, 1, 201);
-            //SharpDX.Matrix v = SharpDX.Matrix.LookAtLH(new SharpDX.Vector3(0, 0, 100), SharpDX.Vector3.Zero, SharpDX.Vector3.UnitY);
-            //SharpDX.Matrix w = SharpDX.Matrix.Identity;
+
 
             SharpDX.Matrix p = SharpDX.Matrix.OrthoOffCenterLH(0, ClientSize.Width, ClientSize.Height, 0, 1, 2);
             SharpDX.Matrix v = SharpDX.Matrix.LookAtLH(new SharpDX.Vector3(0,0, -1), SharpDX.Vector3.Zero, SharpDX.Vector3.UnitY);
@@ -284,7 +282,7 @@ namespace STAR
             d.ImmediateContext.PixelShader.SetShaderResource(0, surfaceveiw);
 
             //rasterizer
-            d.ImmediateContext.Rasterizer.SetViewport(0, 0, this.ClientSize.Width, this.ClientSize.Height);
+            d.ImmediateContext.Rasterizer.SetViewport(0, 0,ClientSize.Width,ClientSize.Height);
             d.ImmediateContext.Rasterizer.State = new SharpDX.Direct3D11.RasterizerState(d, new SharpDX.Direct3D11.RasterizerStateDescription()
             {
                 CullMode = SharpDX.Direct3D11.CullMode.None,
@@ -415,6 +413,8 @@ namespace STAR
 
         private void GameShell_MouseDown(object sender, MouseEventArgs e)
         {
+            
+
 
             //it is time to straighten out my grid
             Point p = e.Location;
@@ -442,7 +442,7 @@ namespace STAR
 
             if (args.IsSurfaceSet)
             { 
-                map.ForCells(x,y,1,1,(ref Surface sur,int u,int v)=>{sur = args.SurfaceForgame; });
+                map.For(x,y,1,1,(ref Surface sur,int u,int v)=>{sur = args.SurfaceForgame; });
                 change = true;
             }
 

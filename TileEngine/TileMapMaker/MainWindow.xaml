@@ -18,13 +18,13 @@
     
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="620"/>
             <ColumnDefinition Width="640"/>
-            <ColumnDefinition Width="480"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="480"/>
-            <RowDefinition Height="120"/>
+            <RowDefinition Height="438"/>
+            <RowDefinition Height="240"/>
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Column="0" Grid.Row="0">
@@ -65,7 +65,7 @@
                 </Menu.Items>                
             </Menu>
             
-            <ListBox Name="ElementsList" DockPanel.Dock="Left" Background="Green">
+            <ListBox Name="ElementsList" DockPanel.Dock="Left" Background="Green" Width="320px">
                 
             </ListBox>
             
