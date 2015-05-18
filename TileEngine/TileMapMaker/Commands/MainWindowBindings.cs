@@ -33,14 +33,33 @@ namespace TileMapMaker
                     TextureChangeOperation,
                     (sender, args) => { args.CanExecute = true; }
                 ));
+
+            CommandBindings.Add(new CommandBinding(
+                ApplicationCommands.Save,
+                ApplicationSaveOperation,
+                (Sender, args) => { args.CanExecute = true; }
+                ));
         }
 
 
         void TextureChangeOperation(object sender,ExecutedRoutedEventArgs args )
         {
-            //load a menu
-            //set an edit mode on the gamemap?
+
+            ElementsList.Items.Clear();
+
+            foreach (TextureData td in texturedata)
+            {
+                ElementsList.Items.Add(td.Index.ToString());
+            }
+
+            comMode = Commands.MapCommandMode.ChangeTexture;          
            
+        }
+
+        void ApplicationSaveOperation(object Sender,ExecutedRoutedEventArgs args)
+        {
+            //save the game
+            MessageBox.Show("Map Saved","Not Really");
         }
 
        

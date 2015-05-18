@@ -14,6 +14,8 @@ using System.Windows.Shapes;
 
 namespace TileMapMaker.Commands
 {
+    public enum MapCommandMode {None, ChangeTexture }
+
     class MapEditCommands
     {
         public static RoutedCommand ChangeTexture = new RoutedCommand();

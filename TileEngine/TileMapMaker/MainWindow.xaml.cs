@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -26,8 +27,12 @@ namespace TileMapMaker
     public partial class MainWindow : Window
     {
         GameShell shell;
-   
-        
+
+        GameMap map;
+
+        ObservableCollection<TextureData> texturedata;
+
+        Commands.MapCommandMode comMode = Commands.MapCommandMode.None;
        
 
         public MainWindow()
@@ -35,8 +40,8 @@ namespace TileMapMaker
             InitializeComponent();
 
             cellProps = new ContextMenu();
-            
-            
+
+            texturedata = new ObservableCollection<TextureData>();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -54,7 +59,7 @@ namespace TileMapMaker
             if (ofd.ShowDialog() ?? false)
             {
 
-                GameMap map = new GameMap(ofd.FileName, 10, 10);
+                map = new GameMap(ofd.FileName, 20, 20);
                 
                 shell = new GameShell(map,true);
                 shell.TopLevel = false;
@@ -63,7 +68,17 @@ namespace TileMapMaker
                 shell.AllowTransparency = true;                
                 shell.GameClick += shell_GameClick;
                 
-                WinHost.Child = shell;   
+                WinHost.Child = shell;
+
+                TextureDataCollection tdc = TextureDataCollection.ReadCollection(map.TextureDataPath);
+
+                foreach (TextureData td in tdc)
+                {
+                    texturedata.Add(td);
+                }
+                
+                
+
 
                 SetCommandBindings();
             }
@@ -76,17 +91,45 @@ namespace TileMapMaker
 
         void shell_GameClick(object sender, GameShellMouseClickEventArgs e)
         {
+            switch (comMode)
+            { 
+                case Commands.MapCommandMode.None:
+
+
+                    break;
+
+
+                case Commands.MapCommandMode.ChangeTexture:
+
+                    if (e.MouseArgs.Button == System.Windows.Forms.MouseButtons.Right)
+                    {
+                        ResetCellProps(e.surfaceFromGame.color.ToString(), e.surfaceFromGame.texindex.ToString(), e.surfaceFromGame.trans.ToString());
+                        cellProps.IsOpen = true;
+                    }
+                    else
+                    {
+
+                        if (ElementsList.SelectedIndex > -1)
+                        {
+                            int index;
+                            if (int.TryParse((string)ElementsList.SelectedItem,out index))
+                            {
+                                e.SetGameSurface(new Surface(e.surfaceFromGame.trans, SharpDX.Vector3.One, (uint)Math.Abs(index)));//test code
+                            }
+                        }
+                    }
             
-            if (e.MouseArgs.Button == System.Windows.Forms.MouseButtons.Right)
-            {
-                ResetCellProps(e.surfaceFromGame.color.ToString(), e.surfaceFromGame.texindex.ToString(), e.surfaceFromGame.trans.ToString());
-                cellProps.IsOpen = true;
+
+                    break;
+
+
+
+                default:
+                    break;                   
             }
-            else
-            {
-               
-                e.SetGameSurface(new Surface(e.surfaceFromGame.trans, SharpDX.Vector3.One,1));//test code
-            }
+                
+
+
 
 
 

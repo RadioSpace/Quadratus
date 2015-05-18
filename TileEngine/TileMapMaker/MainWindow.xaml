@@ -3,9 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"   
         xmlns:d="clr-namespace:TileMapMaker.Commands"
         Title="MainWindow" 
-        Height="720" Width="1280" 
-        ResizeMode="NoResize"
-        Loaded="Window_Loaded"  Closed="Window_Closed">
+        
+        
+        Loaded="Window_Loaded"  Closed="Window_Closed" SizeToContent="WidthAndHeight">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -17,28 +17,25 @@
     
     
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="620"/>
-            <ColumnDefinition Width="640"/>
-        </Grid.ColumnDefinitions>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="438"/>
-            <RowDefinition Height="240"/>
-        </Grid.RowDefinitions>
-
-        <DockPanel Grid.Column="0" Grid.Row="0">
-            <WindowsFormsHost Name="WinHost">
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+        
+            <WindowsFormsHost Name="WinHost" Width="620" Height="438">
                 <WindowsFormsHost.ContextMenu>
-                    <ContextMenu Name="cellProps"   ContextMenuOpening="cellProps_ContextMenuOpening">
+                    <ContextMenu Name="cellProps" ContextMenuOpening="cellProps_ContextMenuOpening">
                         <MenuItem Header="h"/>
                     </ContextMenu>
                 </WindowsFormsHost.ContextMenu>
 
             </WindowsFormsHost>
-        </DockPanel>
-        
-        <DockPanel Grid.Column="1" Grid.Row="0" >
+   
+
+        <ListBox Name="ElementsList" DockPanel.Dock="Left" Background="Green" Width="330">
+
+        </ListBox>
+
+
             
             <Menu DockPanel.Dock="Right"  Background="DarkGray" HorizontalContentAlignment="Stretch">
                 
@@ -64,12 +61,20 @@
                     </MenuItem>
                 </Menu.Items>                
             </Menu>
-            
-            <ListBox Name="ElementsList" DockPanel.Dock="Left" Background="Green" Width="320px">
+        </StackPanel>
+
+            <Menu>
+                <MenuItem Header="File">
+                    <MenuItem.Items>
+                        <MenuItem Header="New Map" Command="New"/>
+                        <MenuItem Header="Save Map" Command="Save"/>
+                        <MenuItem Header="Open Map" Command="Open"/>
+                    </MenuItem.Items>
+                </MenuItem>
                 
-            </ListBox>
-            
-        </DockPanel>
-        
+            </Menu>
+        </StackPanel>
+
+
     </Grid>
 </Window>

@@ -36,7 +36,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(620, 438);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.MaximizeBox = false;
             this.Name = "GameShell";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "GameShell";
             this.Load += new System.EventHandler(this.GameShell_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.GameShell_MouseDown);

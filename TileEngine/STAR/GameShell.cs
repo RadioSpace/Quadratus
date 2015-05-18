@@ -121,9 +121,7 @@ namespace STAR
 
         public GameShell(GameMap m , bool editmode = false)
         {
-            InitializeComponent();
-
-            //ClientSize = new System.Drawing.Size(640, 480);
+            InitializeComponent();            
 
             map = m;
             tdc = TextureDataCollection.ReadCollection(map.TextureDataPath);
@@ -253,7 +251,7 @@ namespace STAR
                 MaximumAnisotropy = 4,     
                 MaximumLod = 1,
                 MinimumLod = 0,
-                MipLodBias = 0
+                MipLodBias = 0                
             });
 
             #endregion
@@ -280,14 +278,16 @@ namespace STAR
             d.ImmediateContext.PixelShader.Set(new SharpDX.Direct3D11.PixelShader(d, CSOLoader.Load("PixelShader.cso")));
             d.ImmediateContext.PixelShader.SetSampler(0, sampler);
             d.ImmediateContext.PixelShader.SetShaderResource(0, surfaceveiw);
+            
 
             //rasterizer
             d.ImmediateContext.Rasterizer.SetViewport(0, 0,ClientSize.Width,ClientSize.Height);
             d.ImmediateContext.Rasterizer.State = new SharpDX.Direct3D11.RasterizerState(d, new SharpDX.Direct3D11.RasterizerStateDescription()
             {
                 CullMode = SharpDX.Direct3D11.CullMode.None,
-                FillMode = SharpDX.Direct3D11.FillMode.Solid
-            });
+                FillMode = SharpDX.Direct3D11.FillMode.Solid               
+            });           
+            
 
             //output
             d.ImmediateContext.OutputMerger.SetRenderTargets(targetveiw);
