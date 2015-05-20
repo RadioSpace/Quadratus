@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -26,9 +27,13 @@ namespace TileMapMaker
     /// </summary>
     public partial class MainWindow : Window
     {
+        
+
+
+
         GameShell shell;
 
-        GameMap map;
+       
 
         ObservableCollection<TextureData> texturedata;
 
@@ -59,7 +64,7 @@ namespace TileMapMaker
             if (ofd.ShowDialog() ?? false)
             {
 
-                map = new GameMap(ofd.FileName, 20, 20);
+                 GameMap map = new GameMap(ofd.FileName, 20, 20);
                 
                 shell = new GameShell(map,true);
                 shell.TopLevel = false;
@@ -161,4 +166,5 @@ namespace TileMapMaker
 
 
     }
+
 }

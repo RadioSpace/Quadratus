@@ -18,7 +18,21 @@ namespace TileMapMaker.Commands
 
     class MapEditCommands
     {
+        /// <summary>
+        /// sets the map editor to ChangeTextureMode
+        /// </summary>
         public static RoutedCommand ChangeTexture = new RoutedCommand();
+
+        /// <summary>
+        /// Locks the map editor for saving
+        /// </summary>
+        public static RoutedCommand Lock = new RoutedCommand();
+
+        /// <summary>
+        /// sets the map editor to ChangeSizeMode
+        /// </summary>
+        public static RoutedCommand ChangeSize = new RoutedCommand();
+
 
         static MapEditCommands()
         { }

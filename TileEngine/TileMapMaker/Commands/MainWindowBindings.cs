@@ -27,16 +27,26 @@ namespace TileMapMaker
         {
             //change texture
 
-            CommandBindings.Add(new CommandBinding
-                (
-                    Commands.MapEditCommands.ChangeTexture,
-                    TextureChangeOperation,
-                    (sender, args) => { args.CanExecute = true; }
+            CommandBindings.Add(new CommandBinding(
+                Commands.MapEditCommands.ChangeTexture,
+                TextureChangeOperation,
+                (sender, args) => { args.CanExecute = true; }
                 ));
 
             CommandBindings.Add(new CommandBinding(
                 ApplicationCommands.Save,
                 ApplicationSaveOperation,
+                (Sender, args) => { args.CanExecute = true; }
+                ));
+
+            CommandBindings.Add(new CommandBinding(
+                Commands.MapEditCommands.ChangeSize,
+                ChangeSizeOperation,
+                (Sender, args) => { args.CanExecute = true; }
+                ));
+            CommandBindings.Add(new CommandBinding(
+                Commands.MapEditCommands.Lock,
+                LockOperation,
                 (Sender, args) => { args.CanExecute = true; }
                 ));
         }
@@ -52,6 +62,7 @@ namespace TileMapMaker
                 ElementsList.Items.Add(td.Index.ToString());
             }
 
+            //set the command mode of the game shell
             comMode = Commands.MapCommandMode.ChangeTexture;          
            
         }
@@ -59,7 +70,24 @@ namespace TileMapMaker
         void ApplicationSaveOperation(object Sender,ExecutedRoutedEventArgs args)
         {
             //save the game
-            MessageBox.Show("Map Saved","Not Really");
+            
+            
+            
+            
+            MessageBox.Show("Map Saved");
+
+
+            App.ProjectState = ProjectState.Saved;
+        }
+
+        void LockOperation(object Sender, ExecutedRoutedEventArgs args)
+        {
+            App.ProjectState = ProjectState.ReadOnly;
+        }
+
+        void ChangeSizeOperation(object Sender, ExecutedRoutedEventArgs args)
+        {
+            App.ProjectState = ProjectState.Unsaved;
         }
 
        
