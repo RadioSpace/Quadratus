@@ -49,8 +49,18 @@
 
                 
                 <Menu.Items>
-                    
-                    <MenuItem Name="ChangeTextureMenutItem"
+
+                        <MenuItem Name="LockMenutItem"
+                          Command="{x:Static d:MapEditCommands.Reset}"                    
+                          Style="{StaticResource TEMenuItemStyle}">
+
+                            <MenuItem.Header>
+                                <TextBlock Text="Reset Map" Style="{StaticResource TEMenuItemHeaderStyle}"/>
+                            </MenuItem.Header>
+
+                        </MenuItem>
+
+                        <MenuItem Name="ChangeTextureMenutItem"
                           Command="{x:Static d:MapEditCommands.ChangeTexture}"                    
                           Style="{StaticResource TEMenuItemStyle}">
                         

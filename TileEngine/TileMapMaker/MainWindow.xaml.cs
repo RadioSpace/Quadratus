@@ -32,6 +32,7 @@ namespace TileMapMaker
 
 
         GameShell shell;
+        string texturedatapath;
 
        
 
@@ -63,8 +64,8 @@ namespace TileMapMaker
 
             if (ofd.ShowDialog() ?? false)
             {
-
-                 GameMap map = new GameMap(ofd.FileName, 20, 20);
+                texturedatapath = ofd.FileName;
+                 GameMap map = new GameMap(texturedatapath, 20, 20);
                 
                 shell = new GameShell(map,true);
                 shell.TopLevel = false;

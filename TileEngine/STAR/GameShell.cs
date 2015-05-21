@@ -453,7 +453,7 @@ namespace STAR
         /// saves the game map to a stream via binary serilization
         /// </summary>
         /// <returns>a stream containg the game map</returns>
-        public System.IO.Stream SaveMap()
+        public byte[] SaveMap()
         {
             if (editgamemode)
             {
@@ -461,9 +461,11 @@ namespace STAR
 
                 new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(ms, map);
 
-                return ms;
+                ms.Close();
+                
+                return ms.ToArray();
             }
-            else 
+            else
             {
                 throw new Exception("Cannot save. not in edit mode");
             }
@@ -490,6 +492,7 @@ namespace STAR
 
                 InitializeGraphics(map.gridWidth, map.gridHeight, map.getPNGPath(), map.GetSurfaces());
 
+                RenderingTask = new Task(render, RenderingCancel.Token);
                 RenderingTask.Start();
             }
         }
