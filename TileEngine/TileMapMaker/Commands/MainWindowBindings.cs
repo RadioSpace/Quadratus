@@ -12,6 +12,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Microsoft.Win32;
+using System.IO;
+
+
 using STAR;
 
 
@@ -70,8 +74,23 @@ namespace TileMapMaker
         void ApplicationSaveOperation(object Sender,ExecutedRoutedEventArgs args)
         {
             //save the game
+
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Title = "Save Map";
+            sfd.Filter = "Game Map|*.gmap";
+            sfd.DefaultExt = ".gmap";
             
-            
+            if (sfd.ShowDialog() ?? false)
+            {
+
+                using (FileStream fs = File.Open(sfd.FileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read))
+                {
+                    Stream s = shell.SaveMap();
+
+                    s.CopyTo(fs);                    
+                }
+
+            }
             
             
             MessageBox.Show("Map Saved");

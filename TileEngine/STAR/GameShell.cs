@@ -8,6 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using LibNoise;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace STAR
 {
@@ -63,6 +65,8 @@ namespace STAR
         TextureDataCollection tdc;
         GameMap map;
 
+        Task RenderingTask;
+        CancellationTokenSource RenderingCancel;
 
         int old_X;
         int old_y;
@@ -118,7 +122,6 @@ namespace STAR
 
         #endregion
 
-
         public GameShell(GameMap m , bool editmode = false)
         {
             InitializeComponent();            
@@ -131,12 +134,12 @@ namespace STAR
             InitializeGraphics(map.gridWidth,map.gridHeight,map.getPNGPath(),map.GetSurfaces());
 
             //start drawing
-            System.Threading.Tasks.Task.Factory.StartNew(render);
+            RenderingCancel = new CancellationTokenSource();
+            RenderingTask = Task.Factory.StartNew(render,RenderingCancel.Token);
 
             editgamemode = editmode;
                         
         }
-
 
         void InitializeGraphics(int width,int height,string spritesheetpath,Surface[] surfaces)
         {
@@ -300,6 +303,8 @@ namespace STAR
         void render()
         {
 
+            //todo: implement the cancellation token instead of the Power variable
+
             Power = true;
 
             while (Power)
@@ -333,7 +338,7 @@ namespace STAR
         {
             Power = false;//power is used by another thread
 
-            System.Threading.Thread.Sleep(500);//give the other thread time to react
+            RenderingTask.Wait();
 
             //shut'er down
             if ( d != null) d.Dispose();
@@ -352,8 +357,6 @@ namespace STAR
 
             base.OnClosing(e);
         }
-
-
 
         #region onMouse
 
@@ -409,8 +412,6 @@ namespace STAR
 
         }
 
-
-
         private void GameShell_MouseDown(object sender, MouseEventArgs e)
         {
             
@@ -446,6 +447,51 @@ namespace STAR
                 change = true;
             }
 
+        }
+
+        /// <summary>
+        /// saves the game map to a stream via binary serilization
+        /// </summary>
+        /// <returns>a stream containg the game map</returns>
+        public System.IO.Stream SaveMap()
+        {
+            if (editgamemode)
+            {
+                MemoryStream ms = new MemoryStream();
+
+                new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(ms, map);
+
+                return ms;
+            }
+            else 
+            {
+                throw new Exception("Cannot save. not in edit mode");
+            }
+
+        }
+
+        /// <summary>
+        /// laods a map into the game
+        /// </summary>
+        /// <param name="m">the map to load into the game</param>
+        public void LoadMap(GameMap m)
+        {
+            if (editgamemode)
+            {
+                Power = false;
+
+                RenderingTask.Wait();
+
+                d.ImmediateContext.ClearState();
+                tdc.Clear();
+
+                map = m;
+                tdc = TextureDataCollection.ReadCollection(map.TextureDataPath);
+
+                InitializeGraphics(map.gridWidth, map.gridHeight, map.getPNGPath(), map.GetSurfaces());
+
+                RenderingTask.Start();
+            }
         }
 
     }
