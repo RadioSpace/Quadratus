@@ -10,7 +10,7 @@ namespace STAR
     /// </summary>
     [Serializable]
     [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential,Size=28)]
-    public struct Surface : IEquatable<Surface>
+    public struct Surface : IEquatable<Surface> , System.Runtime.Serialization.ISerializable
     {
         /// <summary>
         /// the amount to translate the model position by
@@ -38,6 +38,13 @@ namespace STAR
             trans = t;
             color = c;
             texindex = tindex;
+        }
+
+        Surface(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        {
+            trans = new SharpDX.Vector3(info.GetSingle("trans.X"),info.GetSingle("trans.Y"),info.GetSingle("trans.Z"));
+            color = new SharpDX.Vector3(info.GetSingle("color.X"), info.GetSingle("color.Y"), info.GetSingle("color.Z"));
+            texindex = info.GetUInt32("texindex");
         }
 
         /// <summary>
@@ -80,7 +87,20 @@ namespace STAR
             return this.color == other.color && this.texindex == other.texindex && this.trans == other.trans;
         }
         #endregion
-         
+
+
+        public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        {
+            info.AddValue("trans.X", trans.X);
+            info.AddValue("trans.Y", trans.Y);
+            info.AddValue("trans.Z", trans.Z);
+
+            info.AddValue("color.X", color.X);
+            info.AddValue("color.Y", color.Y);
+            info.AddValue("color.Z", color.Z);
+
+            info.AddValue("texindex", texindex);
+        }
     }
 
     

@@ -26,7 +26,7 @@ namespace TileMapMaker.Commands
         /// <summary>
         /// Locks the map editor for saving
         /// </summary>
-        public static RoutedCommand Lock = new RoutedCommand();
+        public static RoutedCommand Reset = new RoutedCommand();
 
         /// <summary>
         /// sets the map editor to ChangeSizeMode

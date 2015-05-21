@@ -49,9 +49,15 @@ namespace TileMapMaker
                 (Sender, args) => { args.CanExecute = true; }
                 ));
             CommandBindings.Add(new CommandBinding(
-                Commands.MapEditCommands.Lock,
-                LockOperation,
+                Commands.MapEditCommands.Reset,
+                ResetOperation,
                 (Sender, args) => { args.CanExecute = true; }
+                ));
+            CommandBindings.Add(
+                new CommandBinding(
+                    ApplicationCommands.Open,
+                    ApplicationOpenOperation,
+                    (Sender, args) => { args.CanExecute = App.ProjectState == ProjectState.Saved?true:false; }
                 ));
         }
 
@@ -67,7 +73,9 @@ namespace TileMapMaker
             }
 
             //set the command mode of the game shell
-            comMode = Commands.MapCommandMode.ChangeTexture;          
+            comMode = Commands.MapCommandMode.ChangeTexture;
+
+            App.ProjectState = ProjectState.Unsaved;
            
         }
 
@@ -85,9 +93,10 @@ namespace TileMapMaker
 
                 using (FileStream fs = File.Open(sfd.FileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read))
                 {
-                    Stream s = shell.SaveMap();
-
-                    s.CopyTo(fs);                    
+                    using (BinaryWriter bw = new BinaryWriter(fs))
+                    {
+                        bw.Write(shell.SaveMap());
+                    }                   
                 }
 
             }
@@ -99,9 +108,12 @@ namespace TileMapMaker
             App.ProjectState = ProjectState.Saved;
         }
 
-        void LockOperation(object Sender, ExecutedRoutedEventArgs args)
+        void ResetOperation(object Sender, ExecutedRoutedEventArgs args)
         {
-            App.ProjectState = ProjectState.ReadOnly;
+
+            shell.LoadMap(new GameMap(texturedatapath, 1, 1));
+            App.ProjectState = ProjectState.Saved;
+
         }
 
         void ChangeSizeOperation(object Sender, ExecutedRoutedEventArgs args)
@@ -109,8 +121,33 @@ namespace TileMapMaker
             App.ProjectState = ProjectState.Unsaved;
         }
 
-       
+        void ApplicationOpenOperation(object sender, ExecutedRoutedEventArgs args)
+        {
+           
+            GameMap loadedmap = null;
 
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Game Map|*.gmap";
+            ofd.Title = "find a map to load";
+            ofd.Multiselect = false;
+            ofd.DefaultExt = ".gmap";
+            ofd.CheckFileExists = true;
+            ofd.CheckPathExists = true;
+            ofd.AddExtension = true;
+
+
+
+            if (ofd.ShowDialog() ?? false)
+            {
+                using (FileStream fs = File.Open(ofd.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    shell.LoadMap((GameMap)new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Deserialize(fs));
+                }
+            }
+
+
+            App.ProjectState = ProjectState.Saved;
+        }
 
     }
 }
