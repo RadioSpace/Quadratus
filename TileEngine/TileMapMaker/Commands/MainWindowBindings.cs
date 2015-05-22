@@ -122,9 +122,8 @@ namespace TileMapMaker
         }
 
         void ApplicationOpenOperation(object sender, ExecutedRoutedEventArgs args)
-        {
-           
-            GameMap loadedmap = null;
+        {          
+            
 
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "Game Map|*.gmap";

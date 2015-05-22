@@ -6,7 +6,7 @@ using System.Text;
 using System.Drawing;
 
 using System.IO;
-using LibNoise;
+
 
 namespace STAR.En_gin
 {
@@ -216,7 +216,7 @@ namespace STAR.En_gin
             d.ImmediateContext.InputAssembler.SetIndexBuffer(ib, SharpDX.DXGI.Format.R32_UInt, 0);
 
             //vertex shader
-            d.ImmediateContext.VertexShader.Set(new SharpDX.Direct3D11.VertexShader(d, CSOLoader.Load("VertexShader.cso")));
+            d.ImmediateContext.VertexShader.Set(new SharpDX.Direct3D11.VertexShader(d,File.ReadAllBytes("VertexShader.cso")));
             d.ImmediateContext.VertexShader.SetConstantBuffers(0, P, V, Arg);
             d.ImmediateContext.VertexShader.SetShaderResource(0, surfacedataveiw);
             d.ImmediateContext.VertexShader.SetShaderResource(1, texturedataveiw);
@@ -226,7 +226,7 @@ namespace STAR.En_gin
             //domain shader
 
             //pixelshader
-            d.ImmediateContext.PixelShader.Set(new SharpDX.Direct3D11.PixelShader(d, CSOLoader.Load("PixelShader.cso")));
+            d.ImmediateContext.PixelShader.Set(new SharpDX.Direct3D11.PixelShader(d, File.ReadAllBytes("PixelShader.cso")));
             d.ImmediateContext.PixelShader.SetSampler(0, sampler);
             d.ImmediateContext.PixelShader.SetShaderResource(0, surfaceveiw);
 

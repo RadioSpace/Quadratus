@@ -35,21 +35,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CSOLoader, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\CSOLoader\CSOLoader\bin\Release\CSOLoader.dll</HintPath>
-    </Reference>
-    <Reference Include="LibNoise">
-      <HintPath>..\..\..\dan\projectmedia\DLL\LibNoise.dll</HintPath>
-    </Reference>
     <Reference Include="SharpDX">
-      <HintPath>..\..\..\SharpDX\Bin\DirectX11-net40\SharpDX.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\dan\SharpDX\Bin\DirectX11-net40\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D11">
-      <HintPath>..\..\..\SharpDX\Bin\DirectX11-net40\SharpDX.Direct3D11.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\dan\SharpDX\Bin\DirectX11-net40\SharpDX.Direct3D11.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.DXGI">
-      <HintPath>..\..\..\SharpDX\Bin\DirectX11-net40\SharpDX.DXGI.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\dan\SharpDX\Bin\DirectX11-net40\SharpDX.DXGI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
