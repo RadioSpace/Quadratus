@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
+//using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Windows;
@@ -18,6 +18,8 @@ using System.Windows.Forms.Integration;
 
 using STAR;
 
+
+
 namespace TileMapMaker
 {
     using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
@@ -33,8 +35,10 @@ namespace TileMapMaker
 
         GameShell shell;
         string texturedatapath;
-
-       
+        
+        
+        BitmapImage bi;
+        SharpDX.Size2 texsize;
 
         ObservableCollection<TextureData> texturedata;
 
@@ -82,11 +86,12 @@ namespace TileMapMaker
                 {
                     texturedata.Add(td);
                 }
-                
-                
 
+                bi = new BitmapImage(new Uri(System.IO.Path.ChangeExtension(map.TextureDataPath,".png")));
 
-                SetCommandBindings();
+                texsize = new SharpDX.Size2((int)(bi.PixelWidth * tdc.CellUnit.u), (int)(bi.PixelHeight * tdc.CellUnit.v));
+
+                SetCommandBindings();//from Commands\MainWindowBindings.cs
             }
             else
             {//close for now 
@@ -165,7 +170,34 @@ namespace TileMapMaker
 
         }
 
+        private void ElementsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch (comMode)
+            { 
+                case Commands.MapCommandMode.ChangeTexture:
 
+                    TextureData td = texturedata[ElementsList.SelectedIndex];
+
+                    CroppedBitmap cb = new CroppedBitmap(
+                        bi,
+                        new Int32Rect(
+                           (int)(td.Texcoord.u * bi.PixelWidth),
+                           (int)(td.Texcoord.v * bi.PixelHeight),
+                           texsize.Width,
+                           texsize.Height
+                        )
+                    );
+                    
+                    TextureViewer.BeginInit();
+                    TextureViewer.Source = cb;
+                    TextureViewer.EndInit();
+
+                    break;
+                case Commands.MapCommandMode.None:
+                    break;
+                default:
+                    break;
+            }
+        }
     }
-
 }
