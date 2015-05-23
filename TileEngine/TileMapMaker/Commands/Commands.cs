@@ -34,6 +34,7 @@ namespace TileMapMaker.Commands
         public static RoutedCommand ChangeSize = new RoutedCommand();
 
 
+
         static MapEditCommands()
         { }
     }

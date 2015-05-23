@@ -31,35 +31,42 @@ namespace TileMapMaker
         {
             //change texture
 
-            CommandBindings.Add(new CommandBinding(
+            CommandBindings.Add(
+                new CommandBinding(
                 Commands.MapEditCommands.ChangeTexture,
                 TextureChangeOperation,
                 (sender, args) => { args.CanExecute = true; }
                 ));
 
-            CommandBindings.Add(new CommandBinding(
-                ApplicationCommands.Save,
-                ApplicationSaveOperation,
-                (Sender, args) => { args.CanExecute = true; }
+            CommandBindings.Add(
+                new CommandBinding(
+                    ApplicationCommands.Save,
+                    ApplicationSaveOperation,
+                    (Sender, args) => { args.CanExecute = true; }
                 ));
 
-            CommandBindings.Add(new CommandBinding(
-                Commands.MapEditCommands.ChangeSize,
-                ChangeSizeOperation,
-                (Sender, args) => { args.CanExecute = true; }
+            CommandBindings.Add(
+                new CommandBinding(
+                    Commands.MapEditCommands.ChangeSize,
+                    ChangeSizeOperation,
+                    (Sender, args) => { args.CanExecute = true; }
                 ));
-            CommandBindings.Add(new CommandBinding(
-                Commands.MapEditCommands.Reset,
-                ResetOperation,
-                (Sender, args) => { args.CanExecute = true; }
+            CommandBindings.Add(
+                new CommandBinding(
+                    Commands.MapEditCommands.Reset,
+                    ResetOperation,
+                    (Sender, args) => { args.CanExecute = true; }
                 ));
             CommandBindings.Add(
                 new CommandBinding(
                     ApplicationCommands.Open,
                     ApplicationOpenOperation,
-                    (Sender, args) => { args.CanExecute = App.ProjectState == ProjectState.Saved?true:false; }
+                    (Sender, args) => { args.CanExecute = App.ProjectState == ProjectState.Saved ? true : false; }
                 ));
+
+
         }
+
 
 
         void TextureChangeOperation(object sender,ExecutedRoutedEventArgs args )

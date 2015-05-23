@@ -74,6 +74,7 @@ namespace STAR
         int ms_z;
 
         SharpDX.Vector3 newlook;
+        SharpDX.Vector3 basepos;
 
         bool firstcatch = true;
         bool change = false;
@@ -138,6 +139,11 @@ namespace STAR
             RenderingTask = Task.Factory.StartNew(render,RenderingCancel.Token);
 
             editgamemode = editmode;
+
+            basepos = new SharpDX.Vector3(
+                    (-ClientSize.Width / 2) + (map.cellSize / 2),
+                    (-ClientSize.Height / 2) + (map.cellSize / 2),
+                    0);
                         
         }
 
@@ -175,14 +181,14 @@ namespace STAR
             v.Transpose();
             w.Transpose();
 
+
+
             VArgs va = new VArgs() 
             { 
                 world = w, 
-                glbTrans = new SharpDX.Vector3(
-                    (-ClientSize.Width / 2) + (map.cellSize/2),
-                    (-ClientSize.Height / 2) + (map.cellSize/2),
-                    0),
-                cs = cellsize / 2f, texcoordbase = tdc.CellUnit
+                glbTrans = basepos,
+                cs = cellsize / 2f, 
+                texcoordbase = tdc.CellUnit
             };
 
             #endregion
@@ -314,6 +320,19 @@ namespace STAR
                 {
                     d.ImmediateContext.UpdateSubresource(map.GetSurfaces(), surfacedata);
                     change = false;
+                }
+
+                if (editgamemode)
+                {
+                    VArgs va = new VArgs()
+                    {
+                         world = SharpDX.Matrix.Identity,
+                         glbTrans = basepos - newlook,
+                         cs = cellsize / 2f,
+                         texcoordbase = tdc.CellUnit
+                    };
+
+                    d.ImmediateContext.UpdateSubresource(ref va, Arg);
                 }
 
 

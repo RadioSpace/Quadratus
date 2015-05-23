@@ -33,12 +33,14 @@
 
                 <StackPanel Width="195">
 
-                <Image Name="TextureViewer" Height="160"  />
-                    
-                <ListBox Name="ElementsList" DockPanel.Dock="Left" Background="Green" Width="330" SelectionChanged="ElementsList_SelectionChanged">                   
-                    
-                </ListBox>
-                    
+                    <Image Name="TextureViewer" Height="160"  />
+
+                    <ScrollViewer Height="277">
+                        <ListBox Name="ElementsList" DockPanel.Dock="Left" Background="Green" Width="330" SelectionChanged="ElementsList_SelectionChanged">
+                           
+                        </ListBox>
+                    </ScrollViewer>
+
                 </StackPanel>
 
 
