@@ -441,9 +441,9 @@ namespace STAR
 
             //find the cell at that position
 
-            
-            int x = p.X / map.cellSize;
-            int y = p.Y / map.cellSize;
+
+            int x = (int)(p.X + newlook.X) / map.cellSize;
+            int y = (int)(p.Y + newlook.Y) / map.cellSize;
             STAR.Surface s;
 
             //fire the mouse click event

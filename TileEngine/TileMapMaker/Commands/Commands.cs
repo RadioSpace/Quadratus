@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 
 namespace TileMapMaker.Commands
 {
-    public enum MapCommandMode {None, ChangeTexture }
+    public enum MapCommandMode {None, ChangeTexture, ChangeColor }
 
     class MapEditCommands
     {
@@ -26,12 +26,12 @@ namespace TileMapMaker.Commands
         /// <summary>
         /// Locks the map editor for saving
         /// </summary>
-        public static RoutedCommand Reset = new RoutedCommand();
+        public static RoutedCommand ChangePosition = new RoutedCommand();
 
         /// <summary>
         /// sets the map editor to ChangeSizeMode
         /// </summary>
-        public static RoutedCommand ChangeSize = new RoutedCommand();
+        public static RoutedCommand ChangeColor = new RoutedCommand();
 
 
 

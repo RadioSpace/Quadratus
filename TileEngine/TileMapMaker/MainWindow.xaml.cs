@@ -131,7 +131,6 @@ namespace TileMapMaker
                     break;
 
 
-
                 default:
                     break;                   
             }
@@ -172,22 +171,30 @@ namespace TileMapMaker
             switch (comMode)
             { 
                 case Commands.MapCommandMode.ChangeTexture:
+                    if (ElementsList.SelectedIndex > -1)
+                    {
+                        TextureData td = texturedata[ElementsList.SelectedIndex];
 
-                    TextureData td = texturedata[ElementsList.SelectedIndex];
+                        CroppedBitmap cb = new CroppedBitmap(
+                            bi,
+                            new Int32Rect(
+                               (int)(td.Texcoord.u * bi.PixelWidth),
+                               (int)(td.Texcoord.v * bi.PixelHeight),
+                               texsize.Width,
+                               texsize.Height
+                            )
+                        );
 
-                    CroppedBitmap cb = new CroppedBitmap(
-                        bi,
-                        new Int32Rect(
-                           (int)(td.Texcoord.u * bi.PixelWidth),
-                           (int)(td.Texcoord.v * bi.PixelHeight),
-                           texsize.Width,
-                           texsize.Height
-                        )
-                    );
-                    
-                    TextureViewer.BeginInit();
-                    TextureViewer.Source = cb;
-                    TextureViewer.EndInit();
+                        TextureViewer.BeginInit();
+                        TextureViewer.Source = cb;
+                        TextureViewer.EndInit();
+                    }
+                    else 
+                    {
+                        TextureViewer.BeginInit();
+                        TextureViewer.Source = null;
+                        TextureViewer.EndInit();
+                    }
 
                     break;
                 case Commands.MapCommandMode.None:

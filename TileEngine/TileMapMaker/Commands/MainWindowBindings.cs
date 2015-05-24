@@ -47,13 +47,13 @@ namespace TileMapMaker
 
             CommandBindings.Add(
                 new CommandBinding(
-                    Commands.MapEditCommands.ChangeSize,
+                    Commands.MapEditCommands.ChangeColor,
                     ChangeSizeOperation,
                     (Sender, args) => { args.CanExecute = true; }
                 ));
             CommandBindings.Add(
                 new CommandBinding(
-                    Commands.MapEditCommands.Reset,
+                    Commands.MapEditCommands.ChangePosition,
                     ResetOperation,
                     (Sender, args) => { args.CanExecute = true; }
                 ));

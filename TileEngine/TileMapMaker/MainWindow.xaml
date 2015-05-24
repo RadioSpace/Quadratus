@@ -15,81 +15,73 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    
-    
+
+
     <Grid>
 
         <StackPanel>
-            <StackPanel Orientation="Horizontal">
-        
-            <WindowsFormsHost Name="WinHost" Width="620" Height="438">
-                <WindowsFormsHost.ContextMenu>
-                    <ContextMenu Name="cellProps" ContextMenuOpening="cellProps_ContextMenuOpening">
-                        <MenuItem Header="h"/>
-                    </ContextMenu>
-                </WindowsFormsHost.ContextMenu>
-
-            </WindowsFormsHost>
-
-                <StackPanel Width="195">
-
-                    <Image Name="TextureViewer" Height="160"  />
-
-                    <ScrollViewer Height="277">
-                        <ListBox Name="ElementsList" DockPanel.Dock="Left" Background="Green" Width="330" SelectionChanged="ElementsList_SelectionChanged">
-                           
-                        </ListBox>
-                    </ScrollViewer>
-
-                </StackPanel>
-
-
-                <Menu DockPanel.Dock="Right"  Background="DarkGray" HorizontalContentAlignment="Stretch">
-                
-                <Menu.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel HorizontalAlignment="Stretch">
-                            
-                        </StackPanel>
-                    </ItemsPanelTemplate>
-                </Menu.ItemsPanel>               
-
-                
-                <Menu.Items>
-
-                        <MenuItem Name="LockMenutItem"
-                          Command="{x:Static d:MapEditCommands.Reset}"                    
-                          Style="{StaticResource TEMenuItemStyle}">
-
-                            <MenuItem.Header>
-                                <TextBlock Text="Reset Map" Style="{StaticResource TEMenuItemHeaderStyle}"/>
-                            </MenuItem.Header>
-
-                        </MenuItem>
-
-                        <MenuItem Name="ChangeTextureMenutItem"
-                          Command="{x:Static d:MapEditCommands.ChangeTexture}"                    
-                          Style="{StaticResource TEMenuItemStyle}">
-                        
-                        <MenuItem.Header>
-                            <TextBlock Text="Change Texture" Style="{StaticResource TEMenuItemHeaderStyle}"/>
-                        </MenuItem.Header>
-                        
-                    </MenuItem>
-                </Menu.Items>                
-            </Menu>
-        </StackPanel>
-
             <Menu>
                 <MenuItem Header="File">
                     <MenuItem.Items>
                         <MenuItem Header="New Map" Command="New"/>
                         <MenuItem Header="Save Map" Command="Save"/>
                         <MenuItem Header="Open Map" Command="Open"/>
+                        
                     </MenuItem.Items>
                 </MenuItem>
-                
             </Menu>
+
+            <StackPanel Orientation="Horizontal">
+
+                <StackPanel>
+                    <WindowsFormsHost Name="WinHost" Width="620" Height="438">
+                        <WindowsFormsHost.ContextMenu>
+                            <ContextMenu Name="cellProps" ContextMenuOpening="cellProps_ContextMenuOpening">
+                                <MenuItem Header="h"/>
+                            </ContextMenu>
+                        </WindowsFormsHost.ContextMenu>
+
+                    </WindowsFormsHost>
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Width="310" Height="150" Background="Yellow">
+                            <!--Game Shell Properties-->
+                        </Grid>
+                        <Grid Width="310" Height="150" Background="Red">
+                            <!--Selected Cell Properties-->
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Width="432">
+
+                    <Menu>
+                        <Menu.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </Menu.ItemsPanel>
+                        
+                        <Menu.Items>
+                            <MenuItem Command="{x:Static d:MapEditCommands.ChangeTexture}">
+                                <MenuItem.Header>
+                                    <Image Style="{StaticResource ToolMenuIconStyle}" />
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Command="{x:Static d:MapEditCommands.ChangeColor}">
+                                <MenuItem.Header>
+                                    <Image Style="{StaticResource ToolMenuIconStyle}" />
+                                </MenuItem.Header>
+                            </MenuItem>
+                        </Menu.Items>
+                    </Menu>
+                    
+                    
+
+                </StackPanel>
+
+
+
+            </StackPanel>
+
         </StackPanel>
 
 
