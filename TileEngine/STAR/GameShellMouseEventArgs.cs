@@ -8,7 +8,7 @@ namespace STAR
     /// <summary>
     /// 
     /// </summary>
-    public class GameShellMouseClickEventArgs : EventArgs
+    public class GameShellMouseEventArgs : EventArgs
     {
         /// <summary>
         /// 
@@ -51,7 +51,7 @@ namespace STAR
         /// <param name="pos"></param>
         /// <param name="cpos"></param>
         /// <param name="ma"></param>
-        public GameShellMouseClickEventArgs(Surface surface,SharpDX.Vector2 cpos, System.Windows.Forms.MouseEventArgs ma)
+        public GameShellMouseEventArgs(Surface surface,SharpDX.Vector2 cpos, System.Windows.Forms.MouseEventArgs ma)
         {
             surfaceFromGame = surface;
           

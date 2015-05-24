@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 
 namespace TileMapMaker.Commands
 {
-    public enum MapCommandMode {None, ChangeTexture, ChangeColor }
+    public enum MapCommandMode {None, ChangeTexture, ChangeColor, ChangePosition }
 
     class MapEditCommands
     {

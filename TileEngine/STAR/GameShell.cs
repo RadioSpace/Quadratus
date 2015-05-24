@@ -76,6 +76,11 @@ namespace STAR
         SharpDX.Vector3 newlook;
         SharpDX.Vector3 basepos;
 
+        /// <summary>
+        /// the cell coords of the last cell the mouse was over
+        /// </summary>
+        SharpDX.Vector2 lastcellover;
+
         bool firstcatch = true;
         bool change = false;
 
@@ -88,11 +93,11 @@ namespace STAR
 
         #region events
 
-        EventHandler<GameShellMouseClickEventArgs> gameclick;
+        EventHandler<GameShellMouseEventArgs> gameclick;
         /// <summary>
         /// used when the gameshell is in editmode
         /// </summary>
-        public event EventHandler<GameShellMouseClickEventArgs> GameClick
+        public event EventHandler<GameShellMouseEventArgs> GameClick
         {
             add 
             {
@@ -119,7 +124,40 @@ namespace STAR
             }
         }
 
-        protected virtual void OnGameClick(GameShellMouseClickEventArgs e) { if (gameclick != null)gameclick(this, e); }
+        protected virtual void OnGameClick(GameShellMouseEventArgs e) { if (gameclick != null)gameclick(this, e); }
+
+
+        EventHandler<GameShellMouseEventArgs> gamemousemove;
+        /// <summary>
+        /// used when the game shell is in edit mode
+        /// </summary>
+        public event EventHandler<GameShellMouseEventArgs> GameMouseMove 
+        {
+            add
+            {
+                lock (locker)
+                {
+                    if (editgamemode)
+                    {
+                        gamemousemove += value;
+                    }
+                }
+            }
+            remove
+            {
+                lock (locker)
+                {
+                    if (gamemousemove != null)
+                    {
+                        if (gamemousemove.GetInvocationList().Contains(value))
+                        {
+                            gamemousemove -= value;
+                        }
+                    }
+                }
+            }
+        }
+        protected virtual void OnGameMouseMove(GameShellMouseEventArgs e) { if (gamemousemove != null)gamemousemove(this, e); }
 
         #endregion
 
@@ -144,6 +182,8 @@ namespace STAR
                     (-ClientSize.Width / 2) + (map.cellSize / 2),
                     (-ClientSize.Height / 2) + (map.cellSize / 2),
                     0);
+
+            lastcellover = new SharpDX.Vector2();
                         
         }
 
@@ -383,44 +423,56 @@ namespace STAR
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (firstcatch)
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
+                if (firstcatch)
+                {
 
-                old_X =  (int)newlook.X + e.X;
-                old_y =  (int)newlook.Y + e.Y;
-                firstcatch = false;
+                    old_X = (int)newlook.X + e.X;
+                    old_y = (int)newlook.Y + e.Y;
+                    firstcatch = false;
 
+                }
             }
             base.OnMouseDown(e);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            if (!firstcatch)
-            {//this is the else for the onmousedown method
-                lock (GameShell.locker)
-                {
-                    newlook = new SharpDX.Vector3(old_X - e.X , old_y - e.Y , ms_z);
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                if (!firstcatch)
+                {//this is the else for the onmousedown method
+                    lock (GameShell.locker)
+                    {
+                        newlook = new SharpDX.Vector3(old_X - e.X, old_y - e.Y, ms_z);
 
-                    change = true;
-          
-                }  
+                        change = true;
+
+                    }
+                }
             }
+
+
+
             
             base.OnMouseMove(e);
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            firstcatch = true;
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                firstcatch = true;
 
-            old_X = (int)newlook.X;
-            old_y = (int)newlook.Y;
+                old_X = (int)newlook.X;
+                old_y = (int)newlook.Y;
+            }
             base.OnMouseUp(e);
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
-        {                       
+        {                   
             ms_z = e.Delta;
             base.OnMouseWheel(e);
         }
@@ -433,36 +485,35 @@ namespace STAR
 
         private void GameShell_MouseDown(object sender, MouseEventArgs e)
         {
-            
 
 
-            //it is time to straighten out my grid
-            Point p = e.Location;
-
-            //find the cell at that position
-
-
-            int x = (int)(p.X + newlook.X) / map.cellSize;
-            int y = (int)(p.Y + newlook.Y) / map.cellSize;
-            STAR.Surface s;
-
-            //fire the mouse click event
-            try
-            {
-                s = map[x, y];
-            }
-            catch
-            {
-                s = new Surface(SharpDX.Vector3.Zero, SharpDX.Vector3.Zero, 0);
-            }
-
-            GameShellMouseClickEventArgs args = new GameShellMouseClickEventArgs(s,new SharpDX.Vector2(x, y),e);
-
+        
+            GameShellMouseEventArgs args = GenerateGameShellMouseEventArgs(e);
             OnGameClick(args);
 
             if (args.IsSurfaceSet)
-            { 
-                map.For(x,y,1,1,(ref Surface sur,int u,int v)=>{sur = args.SurfaceForgame; });
+            {
+                map.For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = args.SurfaceForgame; });
+                change = true;
+            }
+
+        }
+
+        private void GameShell_MouseMove(object sender, MouseEventArgs e)
+        {
+            GameShellMouseEventArgs args = GenerateGameShellMouseEventArgs(e);
+
+            if (lastcellover != args.cellpos)
+            {
+                 OnGameMouseMove(args);
+                 lastcellover = args.cellpos;
+            }
+
+           
+
+            if (args.IsSurfaceSet)
+            {
+                map.For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = args.SurfaceForgame; });
                 change = true;
             }
 
@@ -514,6 +565,32 @@ namespace STAR
                 RenderingTask = new Task(render, RenderingCancel.Token);
                 RenderingTask.Start();
             }
+        }
+
+        GameShellMouseEventArgs GenerateGameShellMouseEventArgs(MouseEventArgs e)
+        {
+            //it is time to straighten out my grid
+            Point p = e.Location;
+
+            //find the cell at that position
+
+
+            int x = (int)(p.X + newlook.X) / map.cellSize;
+            int y = (int)(p.Y + newlook.Y) / map.cellSize;
+            Surface s;
+
+            //fire the mouse click event
+            try
+            {
+                s = map[x, y];
+            }
+            catch
+            {
+                s = new Surface(SharpDX.Vector3.Zero, SharpDX.Vector3.Zero, 0);
+            }
+
+            return new GameShellMouseEventArgs(s, new SharpDX.Vector2(x, y), e);
+
         }
 
     }

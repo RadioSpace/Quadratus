@@ -42,6 +42,7 @@
             this.Text = "GameShell";
             this.Load += new System.EventHandler(this.GameShell_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.GameShell_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.GameShell_MouseMove);
             this.ResumeLayout(false);
 
         }

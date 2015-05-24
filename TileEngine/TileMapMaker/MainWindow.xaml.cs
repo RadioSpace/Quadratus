@@ -53,20 +53,11 @@ namespace TileMapMaker
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.CheckFileExists = true;
-            ofd.CheckPathExists = true;
-            ofd.DefaultExt = ".cmp";
-            ofd.Filter = "Composite Texture Data|*.cmp";
-            ofd.Multiselect = false;
-            ofd.Title = "select the TextureData to use with the map";
 
+
+
+                App.ProjectState = ProjectState.Empty;
             
-
-            if (ofd.ShowDialog() ?? false)
-            {
-                texturedatapath = ofd.FileName;
-                 GameMap map = new GameMap(texturedatapath, 20, 20);
                 
                 shell = new GameShell(map,true);
                 shell.TopLevel = false;
@@ -74,6 +65,7 @@ namespace TileMapMaker
                 shell.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
                 shell.AllowTransparency = true;                
                 shell.GameClick += shell_GameClick;
+                shell.GameMouseMove += shell_GameMouseMove;
                 
                 WinHost.Child = shell;
 
@@ -89,59 +81,84 @@ namespace TileMapMaker
                 texsize = new SharpDX.Size2((int)(bi.PixelWidth * tdc.CellUnit.u), (int)(bi.PixelHeight * tdc.CellUnit.v));
 
                 SetCommandBindings();//from Commands\MainWindowBindings.cs
-            }
-            else
-            {//close for now 
-                
-                Close();
-            }
+            
+            
         }
 
-        void shell_GameClick(object sender, GameShellMouseClickEventArgs e)
+        private void shell_GameMouseMove(object sender, GameShellMouseEventArgs e)
         {
             switch (comMode)
             { 
+                case Commands.MapCommandMode.ChangeColor:
+                    break;
+                
+                case Commands.MapCommandMode.ChangePosition:
+                    break;
+                
+                case Commands.MapCommandMode.ChangeTexture:
+
+                    ChangeTexture(e);
+                    
+                    break;
+                
                 case Commands.MapCommandMode.None:
+                default:
 
 
                     break;
+            }
+        }
 
+        void shell_GameClick(object sender, GameShellMouseEventArgs e)
+        {
+            switch (comMode)
+            {
+                case Commands.MapCommandMode.ChangeColor:
+                    break;
+
+                case Commands.MapCommandMode.ChangePosition:
+
+
+                    break;
 
                 case Commands.MapCommandMode.ChangeTexture:
-                    if (EditorControl.Children.Count > 0)
-                    {
 
-                        Controls.TextureEditor te;
-                        
-                        try{ te = (Controls.TextureEditor)EditorControl.Children[0];}
-                        catch{te = null;}
-
-                        if(te != null)
-                        {
-                            if (e.MouseArgs.Button == System.Windows.Forms.MouseButtons.Left)
-                            {
-                                int index = te.SelectedIndex;
-
-                                if (index > -1)
-                                {
-                                    e.SetGameSurface(new Surface(e.surfaceFromGame.trans, SharpDX.Vector3.One, (uint)index));//test code                                
-                                }
-                            }                        
-                        }
-                    }
+                    ChangeTexture(e);
 
                     break;
 
-
+                case Commands.MapCommandMode.None:
                 default:
-                    break;                   
+
+
+                    break;
             }
-                
 
+        }
 
+        private void ChangeTexture(GameShellMouseEventArgs e)
+        {
+            if (EditorControl.Children.Count > 0)
+            {
 
+                Controls.TextureEditor te;
 
+                try { te = (Controls.TextureEditor)EditorControl.Children[0]; }
+                catch { te = null; }
 
+                if (te != null)
+                {
+                    if (e.MouseArgs.Button == System.Windows.Forms.MouseButtons.Left)
+                    {
+                        int index = te.SelectedIndex;
+
+                        if (index > -1)
+                        {
+                            e.SetGameSurface(new Surface(e.surfaceFromGame.trans, SharpDX.Vector3.One, (uint)index));//test code                                
+                        }
+                    }
+                }
+            }
         }
 
 

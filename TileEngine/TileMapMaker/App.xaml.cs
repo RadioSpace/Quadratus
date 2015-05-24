@@ -37,6 +37,6 @@ namespace TileMapMaker
 
 
     
-    public enum ProjectState {Unsaved,Saved};
+    public enum ProjectState {Unsaved,Saved,Empty};
 
 }
