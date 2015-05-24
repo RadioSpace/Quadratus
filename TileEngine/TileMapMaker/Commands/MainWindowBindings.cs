@@ -33,9 +33,23 @@ namespace TileMapMaker
 
             CommandBindings.Add(
                 new CommandBinding(
-                Commands.MapEditCommands.ChangeTexture,
-                TextureChangeOperation,
-                (sender, args) => { args.CanExecute = true; }
+                    Commands.MapEditCommands.ChangeTexture,
+                    TextureChangeOperation,
+                    (sender, args) => { args.CanExecute = true; }
+                ));
+
+            CommandBindings.Add(
+                new CommandBinding(
+                    Commands.MapEditCommands.ChangeColor,
+                    ChangeSizeOperation,
+                    (Sender, args) => { args.CanExecute = true; }
+                 ));
+
+            CommandBindings.Add(
+                new CommandBinding(
+                    Commands.MapEditCommands.ChangePosition,
+                    ChangePositionOperation,
+                    (Sender, args) => { args.CanExecute = true; }
                 ));
 
             CommandBindings.Add(
@@ -45,18 +59,7 @@ namespace TileMapMaker
                     (Sender, args) => { args.CanExecute = true; }
                 ));
 
-            CommandBindings.Add(
-                new CommandBinding(
-                    Commands.MapEditCommands.ChangeColor,
-                    ChangeSizeOperation,
-                    (Sender, args) => { args.CanExecute = true; }
-                ));
-            CommandBindings.Add(
-                new CommandBinding(
-                    Commands.MapEditCommands.ChangePosition,
-                    ResetOperation,
-                    (Sender, args) => { args.CanExecute = true; }
-                ));
+
             CommandBindings.Add(
                 new CommandBinding(
                     ApplicationCommands.Open,
@@ -64,20 +67,32 @@ namespace TileMapMaker
                     (Sender, args) => { args.CanExecute = App.ProjectState == ProjectState.Saved ? true : false; }
                 ));
 
+            CommandBindings.Add(
+                 new CommandBinding(
+                    ApplicationCommands.New,
+                    ApplicationNewOperation,
+                    (Sender, args) => { args.CanExecute = App.ProjectState == ProjectState.Saved ? true : false; }
+                 ));
 
+
+        }
+
+        private void ApplicationNewOperation(object sender, ExecutedRoutedEventArgs e)
+        {
+            
+
+            App.ProjectState = ProjectState.Saved;
         }
 
 
 
         void TextureChangeOperation(object sender,ExecutedRoutedEventArgs args )
         {
+            EditorControl.Children.Clear();
+            
 
-            ElementsList.Items.Clear();
+            EditorControl.Children.Add(new Controls.TextureEditor(texturedata.ToArray(), bi, texsize));
 
-            foreach (TextureData td in texturedata)
-            {
-                ElementsList.Items.Add(td.Index.ToString());
-            }
 
             //set the command mode of the game shell
             comMode = Commands.MapCommandMode.ChangeTexture;
@@ -115,11 +130,11 @@ namespace TileMapMaker
             App.ProjectState = ProjectState.Saved;
         }
 
-        void ResetOperation(object Sender, ExecutedRoutedEventArgs args)
+        void ChangePositionOperation(object Sender, ExecutedRoutedEventArgs args)
         {
 
-            shell.LoadMap(new GameMap(texturedatapath, 1, 1));
-            App.ProjectState = ProjectState.Saved;
+
+            App.ProjectState = ProjectState.Unsaved;
 
         }
 

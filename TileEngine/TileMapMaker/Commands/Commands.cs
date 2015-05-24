@@ -24,7 +24,7 @@ namespace TileMapMaker.Commands
         public static RoutedCommand ChangeTexture = new RoutedCommand();
 
         /// <summary>
-        /// Locks the map editor for saving
+        /// sets the map editor to change position
         /// </summary>
         public static RoutedCommand ChangePosition = new RoutedCommand();
 

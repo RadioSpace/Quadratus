@@ -108,25 +108,27 @@ namespace TileMapMaker
 
 
                 case Commands.MapCommandMode.ChangeTexture:
-
-                    if (e.MouseArgs.Button == System.Windows.Forms.MouseButtons.Right)
-                    {
-                        ResetCellProps(e.surfaceFromGame.color.ToString(), e.surfaceFromGame.texindex.ToString(), e.surfaceFromGame.trans.ToString());
-                        cellProps.IsOpen = true;
-                    }
-                    else
+                    if (EditorControl.Children.Count > 0)
                     {
 
-                        if (ElementsList.SelectedIndex > -1)
+                        Controls.TextureEditor te;
+                        
+                        try{ te = (Controls.TextureEditor)EditorControl.Children[0];}
+                        catch{te = null;}
+
+                        if(te != null)
                         {
-                            int index;
-                            if (int.TryParse((string)ElementsList.SelectedItem,out index))
+                            if (e.MouseArgs.Button == System.Windows.Forms.MouseButtons.Left)
                             {
-                                e.SetGameSurface(new Surface(e.surfaceFromGame.trans, SharpDX.Vector3.One, (uint)Math.Abs(index)));//test code
-                            }
+                                int index = te.SelectedIndex;
+
+                                if (index > -1)
+                                {
+                                    e.SetGameSurface(new Surface(e.surfaceFromGame.trans, SharpDX.Vector3.One, (uint)index));//test code                                
+                                }
+                            }                        
                         }
                     }
-            
 
                     break;
 
@@ -166,42 +168,8 @@ namespace TileMapMaker
 
         }
 
-        private void ElementsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            switch (comMode)
-            { 
-                case Commands.MapCommandMode.ChangeTexture:
-                    if (ElementsList.SelectedIndex > -1)
-                    {
-                        TextureData td = texturedata[ElementsList.SelectedIndex];
 
-                        CroppedBitmap cb = new CroppedBitmap(
-                            bi,
-                            new Int32Rect(
-                               (int)(td.Texcoord.u * bi.PixelWidth),
-                               (int)(td.Texcoord.v * bi.PixelHeight),
-                               texsize.Width,
-                               texsize.Height
-                            )
-                        );
 
-                        TextureViewer.BeginInit();
-                        TextureViewer.Source = cb;
-                        TextureViewer.EndInit();
-                    }
-                    else 
-                    {
-                        TextureViewer.BeginInit();
-                        TextureViewer.Source = null;
-                        TextureViewer.EndInit();
-                    }
 
-                    break;
-                case Commands.MapCommandMode.None:
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 }

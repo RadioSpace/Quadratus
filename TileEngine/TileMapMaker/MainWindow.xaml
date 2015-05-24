@@ -26,7 +26,7 @@
                         <MenuItem Header="New Map" Command="New"/>
                         <MenuItem Header="Save Map" Command="Save"/>
                         <MenuItem Header="Open Map" Command="Open"/>
-                        
+
                     </MenuItem.Items>
                 </MenuItem>
             </Menu>
@@ -59,23 +59,39 @@
                                 <WrapPanel/>
                             </ItemsPanelTemplate>
                         </Menu.ItemsPanel>
-                        
+
                         <Menu.Items>
                             <MenuItem Command="{x:Static d:MapEditCommands.ChangeTexture}">
                                 <MenuItem.Header>
+                                    <StackPanel>
+                                    <TextBlock Text="Texture"/>
                                     <Image Style="{StaticResource ToolMenuIconStyle}" />
+                                </StackPanel>
                                 </MenuItem.Header>
                             </MenuItem>
                             <MenuItem Command="{x:Static d:MapEditCommands.ChangeColor}">
                                 <MenuItem.Header>
-                                    <Image Style="{StaticResource ToolMenuIconStyle}" />
+                                    <StackPanel>
+                                        <TextBlock Text="Color"/>
+                                        <Image Style="{StaticResource ToolMenuIconStyle}" />
+                                    </StackPanel>
                                 </MenuItem.Header>
                             </MenuItem>
-                        </Menu.Items>
-                    </Menu>
-                    
-                    
+                            <MenuItem Command="{x:Static d:MapEditCommands.ChangePosition}">
+                                <MenuItem.Header>
+                                    <StackPanel>
+                                        <TextBlock Text="Pos"/>
+                                        <Image Style="{StaticResource ToolMenuIconStyle}" />
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
 
+
+                        </Menu.Items>
+                    </Menu>                 
+
+                    <Grid x:Name="EditorControl" Height="547"/>
+                   
                 </StackPanel>
 
 
