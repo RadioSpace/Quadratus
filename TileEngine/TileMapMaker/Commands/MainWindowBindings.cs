@@ -35,28 +35,28 @@ namespace TileMapMaker
                 new CommandBinding(
                     Commands.MapEditCommands.ChangeTexture,
                     TextureChangeOperation,
-                    (sender, args) => { args.CanExecute = true; }
+                    (sender, args) => { args.CanExecute = App.ProjectState != ProjectState.Empty; ; }
                 ));
 
             CommandBindings.Add(
                 new CommandBinding(
                     Commands.MapEditCommands.ChangeColor,
                     ChangeSizeOperation,
-                    (Sender, args) => { args.CanExecute = true; }
+                    (Sender, args) => { args.CanExecute = App.ProjectState != ProjectState.Empty; ; }
                  ));
 
             CommandBindings.Add(
                 new CommandBinding(
                     Commands.MapEditCommands.ChangePosition,
                     ChangePositionOperation,
-                    (Sender, args) => { args.CanExecute = true; }
+                    (Sender, args) => { args.CanExecute = App.ProjectState != ProjectState.Empty; }
                 ));
 
             CommandBindings.Add(
                 new CommandBinding(
                     ApplicationCommands.Save,
                     ApplicationSaveOperation,
-                    (Sender, args) => { args.CanExecute = true; }
+                    (Sender, args) => { args.CanExecute = App.ProjectState == ProjectState.Unsaved; }
                 ));
 
 
@@ -64,14 +64,14 @@ namespace TileMapMaker
                 new CommandBinding(
                     ApplicationCommands.Open,
                     ApplicationOpenOperation,
-                    (Sender, args) => { args.CanExecute = App.ProjectState == ProjectState.Saved ? true : false; }
+                    (Sender, args) => { args.CanExecute = (App.ProjectState == ProjectState.Saved || App.ProjectState == ProjectState.Empty); }
                 ));
 
             CommandBindings.Add(
                  new CommandBinding(
                     ApplicationCommands.New,
                     ApplicationNewOperation,
-                    (Sender, args) => { args.CanExecute = App.ProjectState == ProjectState.Saved ? true : false; }
+                    (Sender, args) => { args.CanExecute = App.ProjectState == ProjectState.Saved || App.ProjectState == ProjectState.Empty; }
                  ));
 
 
@@ -79,9 +79,42 @@ namespace TileMapMaker
 
         private void ApplicationNewOperation(object sender, ExecutedRoutedEventArgs e)
         {
-            
 
-            App.ProjectState = ProjectState.Saved;
+            NewMapDialog nmd = new NewMapDialog();
+            if (nmd.ShowDialog() ?? false)
+            {
+                GameMap map = new GameMap(nmd.NewMapCmpPath, nmd.NewMapWidth, nmd.NewMapHeight);
+                bool maploaded = false;
+
+                try
+                {
+                    shell.LoadMap(map);
+                    maploaded = true;
+                }
+                catch { MessageBox.Show("could not load map"); maploaded = false; }
+
+
+                if (maploaded)
+                {
+                    TextureDataCollection tdc;
+                    try { tdc = TextureDataCollection.ReadCollection(map.TextureDataPath); }
+                    catch { tdc = new TextureDataCollection(); }
+
+                    foreach (TextureData td in tdc)
+                    {
+                        texturedata.Add(td);
+                    }
+
+                    bi = new BitmapImage(new Uri(System.IO.Path.ChangeExtension(map.TextureDataPath, ".png")));
+
+                    texsize = new SharpDX.Size2((int)(bi.PixelWidth * tdc.CellUnit.u), (int)(bi.PixelHeight * tdc.CellUnit.v));
+                }
+
+                
+
+                App.ProjectState = ProjectState.Saved;
+            }
+
         }
 
 
@@ -112,14 +145,7 @@ namespace TileMapMaker
             
             if (sfd.ShowDialog() ?? false)
             {
-
-                using (FileStream fs = File.Open(sfd.FileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read))
-                {
-                    using (BinaryWriter bw = new BinaryWriter(fs))
-                    {
-                        bw.Write(shell.SaveMap());
-                    }                   
-                }
+                File.WriteAllBytes(sfd.FileName,shell.SaveMap());             
 
             }
             
@@ -144,8 +170,8 @@ namespace TileMapMaker
         }
 
         void ApplicationOpenOperation(object sender, ExecutedRoutedEventArgs args)
-        {          
-            
+        {
+
 
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "Game Map|*.gmap";
@@ -160,14 +186,31 @@ namespace TileMapMaker
 
             if (ofd.ShowDialog() ?? false)
             {
-                using (FileStream fs = File.Open(ofd.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+
+                if (shell == null)
+                { 
+                    
+                }
+
+                using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(ofd.FileName)))
                 {
-                    shell.LoadMap((GameMap)new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Deserialize(fs));
+                    
+
+                    try
+                    {
+                        shell.LoadMap((GameMap)new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Deserialize(ms));
+                        App.ProjectState = ProjectState.Saved;
+                    }
+                    catch (Exception EX)
+                    {
+                        MessageBox.Show("could not open map");
+
+                    }
                 }
             }
 
 
-            App.ProjectState = ProjectState.Saved;
+            
         }
 
     }

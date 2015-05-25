@@ -47,7 +47,7 @@ namespace STAR
         #endregion
 
         #region events
-
+        
         public event EventHandler<SurfaceEventArgs> WatchedSurfaceChanged;
         protected virtual void OnWatchedSurfaceChanged(SurfaceEventArgs e) { if (WatchedSurfaceChanged != null) { WatchedSurfaceChanged(this, e); } }
 

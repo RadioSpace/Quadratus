@@ -86,7 +86,8 @@ namespace STAR.En_gin
         /// </summary>
         public TileEngine(TileEngineDescription desc)
         {
-            tdc = TextureDataCollection.ReadCollection(desc.cmpPath);
+            try { tdc = TextureDataCollection.ReadCollection(desc.cmpPath); }
+            catch { tdc = new TextureDataCollection(); }
 
             InitializeGraphics(desc.surfaceData, desc.cellsWide, desc.cellsHigh, desc.texturepath, desc.handle);
 

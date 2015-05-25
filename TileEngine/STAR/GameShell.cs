@@ -166,7 +166,8 @@ namespace STAR
             InitializeComponent();            
 
             map = m;
-            tdc = TextureDataCollection.ReadCollection(map.TextureDataPath);
+            try { tdc = TextureDataCollection.ReadCollection(map.TextureDataPath); }
+            catch { tdc = new TextureDataCollection(); return; }
             
 
 
@@ -558,7 +559,8 @@ namespace STAR
                 tdc.Clear();
 
                 map = m;
-                tdc = TextureDataCollection.ReadCollection(map.TextureDataPath);
+                try { tdc = TextureDataCollection.ReadCollection(map.TextureDataPath); }
+                catch { tdc = new TextureDataCollection(); }
 
                 InitializeGraphics(map.gridWidth, map.gridHeight, map.getPNGPath(), map.GetSurfaces());
 

@@ -31,8 +31,6 @@ namespace TileMapMaker
     {
 
         GameShell shell;
-        string texturedatapath;
-        
         
         BitmapImage bi;
         SharpDX.Size2 texsize;
@@ -53,36 +51,24 @@ namespace TileMapMaker
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
-
-
-                App.ProjectState = ProjectState.Empty;
             
-                
-                shell = new GameShell(map,true);
-                shell.TopLevel = false;
-                shell.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-                shell.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-                shell.AllowTransparency = true;                
-                shell.GameClick += shell_GameClick;
-                shell.GameMouseMove += shell_GameMouseMove;
-                
-                WinHost.Child = shell;
 
-                TextureDataCollection tdc = TextureDataCollection.ReadCollection(map.TextureDataPath);
-
-                foreach (TextureData td in tdc)
-                {
-                    texturedata.Add(td);
-                }
-
-                bi = new BitmapImage(new Uri(System.IO.Path.ChangeExtension(map.TextureDataPath,".png")));
-
-                texsize = new SharpDX.Size2((int)(bi.PixelWidth * tdc.CellUnit.u), (int)(bi.PixelHeight * tdc.CellUnit.v));
-
-                SetCommandBindings();//from Commands\MainWindowBindings.cs
             
-            
+            shell = new GameShell(new GameMap("dev1.cmp",1,1), true);
+            shell.TopLevel = false;
+            shell.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            shell.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            shell.AllowTransparency = true;
+            shell.GameClick += shell_GameClick;
+            shell.GameMouseMove += shell_GameMouseMove;
+
+            WinHost.Child = shell;
+
+
+            App.ProjectState = ProjectState.Empty;
+
+
+            SetCommandBindings();//from Commands\MainWindowBindings.cs
         }
 
         private void shell_GameMouseMove(object sender, GameShellMouseEventArgs e)

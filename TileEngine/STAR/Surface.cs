@@ -42,9 +42,18 @@ namespace STAR
 
         Surface(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
         {
-            trans = new SharpDX.Vector3(info.GetSingle("trans.X"),info.GetSingle("trans.Y"),info.GetSingle("trans.Z"));
-            color = new SharpDX.Vector3(info.GetSingle("color.X"), info.GetSingle("color.Y"), info.GetSingle("color.Z"));
-            texindex = info.GetUInt32("texindex");
+            try
+            {
+                trans = new SharpDX.Vector3(info.GetSingle("trans.X"), info.GetSingle("trans.Y"), info.GetSingle("trans.Z"));
+                color = new SharpDX.Vector3(info.GetSingle("color.X"), info.GetSingle("color.Y"), info.GetSingle("color.Z"));
+                texindex = info.GetUInt32("texindex");
+            }
+            catch (Exception EX) 
+            {
+                trans = new SharpDX.Vector3();
+                color = new SharpDX.Vector3();
+                texindex = 0;
+            }
         }
 
         /// <summary>
