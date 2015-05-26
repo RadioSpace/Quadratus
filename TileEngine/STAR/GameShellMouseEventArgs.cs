@@ -13,7 +13,7 @@ namespace STAR
         /// <summary>
         /// 
         /// </summary>
-        public readonly Surface surfaceFromGame;//maybe should be an array for layered surfaces?
+        public readonly Surface? surfaceFromGame;//maybe should be an array for layered surfaces?
         /// <summary>
         /// 
         /// </summary>
@@ -24,8 +24,8 @@ namespace STAR
         public readonly System.Windows.Forms.MouseEventArgs MouseArgs;
 
 
-        Surface surfaceForGame;
-        internal Surface SurfaceForgame { get { return surfaceForGame; } }
+        Surface? surfaceForGame;
+        internal Surface? SurfaceForgame { get { return surfaceForGame; } }
 
         bool isSurfaceSet = false;
         public bool IsSurfaceSet { get { return isSurfaceSet; } }
@@ -45,13 +45,13 @@ namespace STAR
         
 
         /// <summary>
-        /// creates a new Mouse CLick Args for the game sshell
+        /// creates a new Mouse Click Args for the game sshell
         /// </summary>
         /// <param name="surface"></param>
         /// <param name="pos"></param>
         /// <param name="cpos"></param>
         /// <param name="ma"></param>
-        public GameShellMouseEventArgs(Surface surface,SharpDX.Vector2 cpos, System.Windows.Forms.MouseEventArgs ma)
+        public GameShellMouseEventArgs(Surface? surface,SharpDX.Vector2 cpos, System.Windows.Forms.MouseEventArgs ma)
         {
             surfaceFromGame = surface;
           

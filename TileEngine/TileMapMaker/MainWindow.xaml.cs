@@ -140,7 +140,7 @@ namespace TileMapMaker
 
                         if (index > -1)
                         {
-                            e.SetGameSurface(new Surface(e.surfaceFromGame.trans, SharpDX.Vector3.One, (uint)index));//test code                                
+                            e.SetGameSurface(new Surface(e.surfaceFromGame.HasValue ? e.surfaceFromGame.Value.trans:SharpDX.Vector3.Zero, SharpDX.Vector3.One, (uint)index));//test code
                         }
                     }
                 }
@@ -170,9 +170,6 @@ namespace TileMapMaker
         {
 
         }
-
-
-
 
     }
 }

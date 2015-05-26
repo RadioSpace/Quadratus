@@ -490,32 +490,42 @@ namespace STAR
 
         
             GameShellMouseEventArgs args = GenerateGameShellMouseEventArgs(e);
-            OnGameClick(args);
 
-            if (args.IsSurfaceSet)
+            if (args != null)
             {
-                map.For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = args.SurfaceForgame; });
-                change = true;
+                OnGameClick(args);
+
+                if (args.IsSurfaceSet)
+                {
+                    map.For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
+                    change = true;
+                }
             }
 
         }
 
         private void GameShell_MouseMove(object sender, MouseEventArgs e)
         {
+            
+           
             GameShellMouseEventArgs args = GenerateGameShellMouseEventArgs(e);
 
-            if (lastcellover != args.cellpos)
+            if (args != null)
             {
-                 OnGameMouseMove(args);
-                 lastcellover = args.cellpos;
-            }
 
-           
+                if (lastcellover != args.cellpos)
+                {
+                    OnGameMouseMove(args);
+                    lastcellover = args.cellpos;
+                }
 
-            if (args.IsSurfaceSet)
-            {
-                map.For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = args.SurfaceForgame; });
-                change = true;
+
+
+                if (args.IsSurfaceSet)
+                {
+                    map.For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
+                    change = true;
+                }
             }
 
         }
@@ -579,19 +589,14 @@ namespace STAR
 
             int x = (int)(p.X + newlook.X) / map.cellSize;
             int y = (int)(p.Y + newlook.Y) / map.cellSize;
-            Surface s;
+            
+           
 
-            //fire the mouse click event
-            try
+            if (x > -1 && y > -1 && x < map.gridWidth && y < map.gridHeight)
             {
-                s = map[x, y];
+                return new GameShellMouseEventArgs(map[x, y], new SharpDX.Vector2(x, y), e);
             }
-            catch
-            {
-                s = new Surface(SharpDX.Vector3.Zero, SharpDX.Vector3.Zero, 0);
-            }
-
-            return new GameShellMouseEventArgs(s, new SharpDX.Vector2(x, y), e);
+            else return null;           
 
         }
 

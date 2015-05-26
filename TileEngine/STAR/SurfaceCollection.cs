@@ -229,7 +229,7 @@ namespace STAR
         /// <returns>a Surface of a cell on a grid</returns>
         public Surface this[int x,int y]
         {
-            get { return x < width ? surfaces[x + (y * width)] : burp<IndexOutOfRangeException,Surface>() ; }
+            get { return x < width && x > -1 && y < height && y > -1 ? surfaces[x + (y * width)] : burp<IndexOutOfRangeException,Surface>() ; }//burping causes a lot of output to the debugger
             set
             {
                 int index = x + (y * width);
