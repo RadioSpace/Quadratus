@@ -107,6 +107,7 @@ namespace TileMapMaker
 
                 case Commands.MapCommandMode.ChangePosition:
 
+                    ChangePosition(e);
 
                     break;
 
@@ -125,20 +126,47 @@ namespace TileMapMaker
 
         }
 
+        private void ChangePosition(GameShellMouseEventArgs e)
+        {
+            if (EditorControl.Children.Count > 0)
+            {
+                if (EditorControl.Children[0] is Controls.PositionEditor)
+                {
+                    if (e.MouseArgs.Button == System.Windows.Forms.MouseButtons.Left)
+                    {
+                        //we are not ready because of the way the editor finds the cells it is editing 
+                        //will have to find an nice way to find the cells by there Translation
+
+                        //Controls.PositionEditor pe =  (Controls.PositionEditor)EditorControl.Children[0];
+
+
+                        //do nothing
+                        
+                    }
+
+                }
+
+
+                App.ProjectState = ProjectState.Unsaved;
+            }
+
+            
+        }
+
         private void ChangeColor(GameShellMouseEventArgs e)
         {
             if (EditorControl.Children.Count > 0)
             {
 
-                Controls.ColorEditor ce;
-
-                try { ce = (Controls.ColorEditor)EditorControl.Children[0]; }
-                catch { ce = null; }
-
-                if (ce != null)
+                
+                if(EditorControl.Children[0] is Controls.ColorEditor)
                 {
+                    
+
                     if (e.MouseArgs.Button == System.Windows.Forms.MouseButtons.Left)
                     {
+                        Controls.ColorEditor ce = (Controls.ColorEditor)EditorControl.Children[0]; 
+
                         e.SetGameSurface(new Surface(e.surfaceFromGame.HasValue ? e.surfaceFromGame.Value.trans : SharpDX.Vector3.Zero, ce.SelectedColorVector3, e.surfaceFromGame.HasValue ? e.surfaceFromGame.Value.texindex : 0));//test code
                         App.ProjectState = ProjectState.Unsaved;
 
@@ -150,17 +178,14 @@ namespace TileMapMaker
         private void ChangeTexture(GameShellMouseEventArgs e)
         {
             if (EditorControl.Children.Count > 0)
-            {
+            {                
 
-                Controls.TextureEditor te;
-
-                try { te = (Controls.TextureEditor)EditorControl.Children[0]; }
-                catch { te = null; }
-
-                if (te != null)
+                if(EditorControl.Children[0] is Controls.TextureEditor)
                 {
                     if (e.MouseArgs.Button == System.Windows.Forms.MouseButtons.Left)
                     {
+                        Controls.TextureEditor te = (Controls.TextureEditor)EditorControl.Children[0];    
+
                         int index = te.SelectedIndex;
 
                         if (index > -1)

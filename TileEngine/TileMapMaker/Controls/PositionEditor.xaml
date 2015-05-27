@@ -6,6 +6,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-            
+        <TextBlock TextWrapping="Wrap" Text="Engine Not ready for this. you will not be able to edit the texture unless you click where it was originally. feature coming after I build the game part of the engine"/>
     </Grid>
 </UserControl>

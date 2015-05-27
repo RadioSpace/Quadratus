@@ -158,10 +158,10 @@ namespace TileMapMaker
 
         void ChangePositionOperation(object Sender, ExecutedRoutedEventArgs args)
         {
+            EditorControl.Children.Clear();
+            EditorControl.Children.Add(new Controls.PositionEditor());
 
-
-            App.ProjectState = ProjectState.Unsaved;
-
+            comMode = Commands.MapCommandMode.ChangePosition;
         }
 
         void ChangeSizeOperation(object Sender, ExecutedRoutedEventArgs args)
