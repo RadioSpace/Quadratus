@@ -76,9 +76,11 @@ namespace TileMapMaker
             switch (comMode)
             { 
                 case Commands.MapCommandMode.ChangeColor:
+                    ChangeColor(e);
                     break;
                 
                 case Commands.MapCommandMode.ChangePosition:
+                    ChangePosition(e);
                     break;
                 
                 case Commands.MapCommandMode.ChangeTexture:
