@@ -130,7 +130,7 @@ namespace TileMapMaker
             //set the command mode of the game shell
             comMode = Commands.MapCommandMode.ChangeTexture;
 
-            App.ProjectState = ProjectState.Unsaved;
+           
            
         }
 
@@ -166,7 +166,13 @@ namespace TileMapMaker
 
         void ChangeSizeOperation(object Sender, ExecutedRoutedEventArgs args)
         {
-            App.ProjectState = ProjectState.Unsaved;
+
+            EditorControl.Children.Clear();
+            EditorControl.Children.Add(new Controls.ColorEditor());
+
+            comMode = Commands.MapCommandMode.ChangeColor;
+
+            
         }
 
         void ApplicationOpenOperation(object sender, ExecutedRoutedEventArgs args)

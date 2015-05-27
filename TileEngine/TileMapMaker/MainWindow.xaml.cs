@@ -100,6 +100,9 @@ namespace TileMapMaker
             switch (comMode)
             {
                 case Commands.MapCommandMode.ChangeColor:
+
+                    ChangeColor(e);
+
                     break;
 
                 case Commands.MapCommandMode.ChangePosition:
@@ -122,6 +125,28 @@ namespace TileMapMaker
 
         }
 
+        private void ChangeColor(GameShellMouseEventArgs e)
+        {
+            if (EditorControl.Children.Count > 0)
+            {
+
+                Controls.ColorEditor ce;
+
+                try { ce = (Controls.ColorEditor)EditorControl.Children[0]; }
+                catch { ce = null; }
+
+                if (ce != null)
+                {
+                    if (e.MouseArgs.Button == System.Windows.Forms.MouseButtons.Left)
+                    {
+                        e.SetGameSurface(new Surface(e.surfaceFromGame.HasValue ? e.surfaceFromGame.Value.trans : SharpDX.Vector3.Zero, ce.SelectedColorVector3, e.surfaceFromGame.HasValue ? e.surfaceFromGame.Value.texindex : 0));//test code
+                        App.ProjectState = ProjectState.Unsaved;
+
+                    }
+                }
+            }
+        }
+
         private void ChangeTexture(GameShellMouseEventArgs e)
         {
             if (EditorControl.Children.Count > 0)
@@ -141,6 +166,7 @@ namespace TileMapMaker
                         if (index > -1)
                         {
                             e.SetGameSurface(new Surface(e.surfaceFromGame.HasValue ? e.surfaceFromGame.Value.trans:SharpDX.Vector3.Zero, SharpDX.Vector3.One, (uint)index));//test code
+                            App.ProjectState = ProjectState.Unsaved;
                         }
                     }
                 }

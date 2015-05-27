@@ -6,6 +6,24 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-            
+        <StackPanel>
+            <TextBlock Height="100">
+                <TextBlock.Background>
+                    <SolidColorBrush x:Name="newcolor" />                    
+                </TextBlock.Background>
+            </TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Red" Margin="0,0,10,0" Width="25"/>
+                <Slider Name="redval" Width="186" ValueChanged="Slider_ValueChanged" Minimum="0" Maximum="100000000" Interval="390625"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Green" Width="35"/>
+                <Slider Name="greenval" Width="186" ValueChanged="Slider_ValueChanged" Minimum="0" Maximum="100000000" Interval="390625"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Blue" Margin="0,0,10,0" Width="26"/>
+                <Slider Name="blueval" Width="184" ValueChanged="Slider_ValueChanged" Minimum="0" Maximum="100000000" Interval="390625"/>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </UserControl>
