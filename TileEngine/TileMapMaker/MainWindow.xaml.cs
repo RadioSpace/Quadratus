@@ -51,16 +51,20 @@ namespace TileMapMaker
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            
+
+            GameProject project = new GameProject();
+            project.AddMap("default",new GameMap("dev1.cmp",1,1));
 
             
-            shell = new GameShell(new GameMap("dev1.cmp",1,1), true);
+            shell = new GameShell(project, true);
+            shell.SelectMap("default");
             shell.TopLevel = false;
             shell.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             shell.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             shell.AllowTransparency = true;
             shell.GameClick += shell_GameClick;
             shell.GameMouseMove += shell_GameMouseMove;
+            
 
             WinHost.Child = shell;
 

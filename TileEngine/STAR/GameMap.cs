@@ -160,13 +160,9 @@ namespace STAR
             return (string.IsNullOrWhiteSpace(dirname) ? "" : dirname  + "\\") + System.IO.Path.GetFileNameWithoutExtension(texturedatapath) + ".png";
         }
 
-        /// <summary>
-        /// gets all the surfaces of the grid as an array
-        /// </summary>
-        /// <returns>A Surface array</returns>
-        public Surface[] GetSurfaces()
+        public string GetCMPPath()
         {
-            return surfaces.ToArray();
+            return texturedatapath;
         }
 
         #region graphics
@@ -264,15 +260,18 @@ namespace STAR
 
         public void UpdateGraphics(Device d,Vector3 args)
         {
+            Matrix w = Matrix.Identity;
+            w.Transpose();
+
             VArgs varg = new VArgs() 
             {
                 cs = cellsize/2,
-                glbTrans = args - basepos,
+                glbTrans =  basepos - args,
                 texcrdbase = tdc.CellUnit,
-                world = Matrix.Identity//yeah, i know          
+                world = w//yeah, i know          
             };
 
-            d.ImmediateContext.UpdateSubresource(ref args, Arg);
+            d.ImmediateContext.UpdateSubresource(ref varg, Arg);
         }
 
         public void PrepareGraphics(Device d )
@@ -292,7 +291,12 @@ namespace STAR
 
             d.ImmediateContext.PixelShader.SetShaderResource(0, texview);
         }
-        
+
+        public void UpdateSurfaces(Device d)
+        {
+            d.ImmediateContext.UpdateSubresource(surfaces, surfacedata);
+        }
+       
 
         void dualincrease(ref uint x, uint a, ref uint y, uint b)
         {

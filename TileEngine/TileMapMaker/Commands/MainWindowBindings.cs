@@ -97,7 +97,7 @@ namespace TileMapMaker
                 if (maploaded)
                 {
                     TextureDataCollection tdc;
-                    try { tdc = TextureDataCollection.ReadCollection(map.TextureDataPath); }
+                    try { tdc = TextureDataCollection.ReadCollection(map.GetCMPPath()); }
                     catch { tdc = new TextureDataCollection(); }
 
                     foreach (TextureData td in tdc)
@@ -105,7 +105,7 @@ namespace TileMapMaker
                         texturedata.Add(td);
                     }
 
-                    bi = new BitmapImage(new Uri(System.IO.Path.ChangeExtension(map.TextureDataPath, ".png")));
+                    bi = new BitmapImage(new Uri(System.IO.Path.ChangeExtension(map.GetCMPPath(), ".png")));
 
                     texsize = new SharpDX.Size2((int)(bi.PixelWidth * tdc.CellUnit.u), (int)(bi.PixelHeight * tdc.CellUnit.v));
                 }

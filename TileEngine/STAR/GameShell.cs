@@ -51,6 +51,7 @@ namespace STAR
 
         GameProject project;
         string currentmap;
+        string[] mapnames;
 
         Task RenderingTask;
         CancellationTokenSource RenderingCancel;
@@ -146,32 +147,6 @@ namespace STAR
 
         #endregion
 
-        /// <summary>
-        /// creates a gameshell that runs one GameMap and optionally can edit it
-        /// </summary>
-        /// <param name="m">the map to load</param>
-        /// <param name="editmode">true to start the map in edit mode</param>
-        public GameShell(GameMap m ,bool editmode = false )
-        {
-            InitializeComponent();
-
-            InitializeGraphics();
-
-
-
-            project = new GameProject();
-            project.AddMap("default", m);
-            currentmap = "default";
-            //start drawing
-            RenderingCancel = new CancellationTokenSource();
-            RenderingTask = Task.Factory.StartNew(render,RenderingCancel.Token);
-
-            editgamemode = editmode;
-
-            lastcellover = new SharpDX.Vector2();
-             
-                        
-        }
 
         public GameShell(GameProject p,bool editmode = false)
         {
@@ -180,14 +155,15 @@ namespace STAR
             InitializeGraphics();
 
             project = p;
+
          
-            string[] mapnames = project.GetKeys();
-               
+            mapnames = project.GetKeys();
+            currentmap = mapnames[0];
             editgamemode = editmode;
 
             lastcellover = new SharpDX.Vector2();
             
-            foreach (string name in p.GetKeys())
+            foreach (string name in mapnames)
             {
                 project[name].InitializeGraphics(d, ClientSize.Width, ClientSize.Height);
                 
@@ -266,13 +242,13 @@ namespace STAR
                 //now we have the Gamemap object and it is ready to dynamically edit the surface data
 
                 #region junk
-               /* need to fix this
+           
                 if (surfaceChange)
                 {
-                    d.ImmediateContext.UpdateSubresource(map.GetSurfaces(), surfacedata);
+                    project[currentmap].UpdateSurfaces(d);
                     surfaceChange = false;
                 }
-                */
+                
 
 
                 
@@ -325,6 +301,7 @@ namespace STAR
   
             if ( sampler != null) sampler.Dispose();
 
+            if (project != null) project.Dispose();
 
             base.OnClosing(e);
         }
@@ -422,12 +399,8 @@ namespace STAR
 
                     if (args.IsSurfaceSet)
                     {
-                        foreach (string name in project.GetKeys())
-                        {//started to fix this
-                            project[name].For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
-                            surfaceChange = true;
-                        }
-                     
+                        project[currentmap].For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
+                        surfaceChange = true;
                     }
                 }
             }
@@ -442,7 +415,6 @@ namespace STAR
 
                 if (args != null)
                 {
-
                     if (lastcellover != args.cellpos)
                     {
                         OnGameMouseMove(args);
@@ -502,6 +474,13 @@ namespace STAR
             }
         }
 
+        public void SelectMap(string name)
+        {
+            if (mapnames.Contains(name))
+            {
+                currentmap = name;
+            }
+        }
 
         GameShellMouseEventArgs GenerateGameShellMouseEventArgs(MouseEventArgs e)
         {
