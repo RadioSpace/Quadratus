@@ -48,7 +48,7 @@ namespace STAR
                 color = new SharpDX.Vector3(info.GetSingle("color.X"), info.GetSingle("color.Y"), info.GetSingle("color.Z"));
                 texindex = info.GetUInt32("texindex");
             }
-            catch (Exception EX) 
+            catch
             {
                 trans = new SharpDX.Vector3();
                 color = new SharpDX.Vector3();
@@ -122,7 +122,9 @@ namespace STAR
         public SharpDX.Matrix world;//64
         public SharpDX.Vector3 glbTrans;//12
         public float cs;//cell size//4
-        public SharpDX.Vector2 texcoordbase;//8
+        public SharpDX.Vector2 texcrdbase;        
     }
+
+
 }
 

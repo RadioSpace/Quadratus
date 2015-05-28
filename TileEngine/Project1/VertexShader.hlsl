@@ -17,8 +17,11 @@ cbuffer Args2 : register(b2)
 	float3 glbTrans; //a Global translation
 	float cs;// cellsize
 	float2 txcrdbase;
+	
 
 };
+
+
 
 struct surface
 {

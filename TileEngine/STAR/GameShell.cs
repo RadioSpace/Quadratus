@@ -31,25 +31,11 @@ namespace STAR
         SharpDX.Direct3D11.Device d;
         SharpDX.DXGI.SwapChain sc;
 
-        SharpDX.Direct3D11.Buffer ib;
 
-        SharpDX.Direct3D11.Buffer surfacedata;
-        SharpDX.Direct3D11.ShaderResourceView surfacedataveiw;
-
-        SharpDX.Direct3D11.Buffer texturedata;
-        SharpDX.Direct3D11.ShaderResourceView texturedataveiw;
-
-
-        SharpDX.Direct3D11.Buffer P;
-        SharpDX.Direct3D11.Buffer V;
-        SharpDX.Direct3D11.Buffer Arg;
 
         SharpDX.Direct3D11.Texture2D target;
-        SharpDX.Direct3D11.RenderTargetView targetveiw;
+        SharpDX.Direct3D11.RenderTargetView targetveiw;       
 
-        
-        SharpDX.Direct3D11.Texture2D surface;
-        SharpDX.Direct3D11.ShaderResourceView surfaceveiw;
 
         SharpDX.Direct3D11.SamplerState sampler;
 
@@ -59,11 +45,12 @@ namespace STAR
 
         bool Power = true;
 
-        uint indexcount;
+        
         float cellsize = 24;
 
-        TextureDataCollection tdc;
-        GameMap map;
+
+        GameProject project;
+        string currentmap;
 
         Task RenderingTask;
         CancellationTokenSource RenderingCancel;
@@ -74,7 +61,7 @@ namespace STAR
         int ms_z;
 
         SharpDX.Vector3 newlook;
-        SharpDX.Vector3 basepos;
+        
 
         /// <summary>
         /// the cell coords of the last cell the mouse was over
@@ -82,9 +69,7 @@ namespace STAR
         SharpDX.Vector2 lastcellover;
 
         bool firstcatch = true;
-        bool change = false;
-
-        bool cellupdate = false;
+        bool surfaceChange = false;
 
         bool editgamemode = false;
 
@@ -161,84 +146,64 @@ namespace STAR
 
         #endregion
 
-        public GameShell(GameMap m , bool editmode = false)
+        /// <summary>
+        /// creates a gameshell that runs one GameMap and optionally can edit it
+        /// </summary>
+        /// <param name="m">the map to load</param>
+        /// <param name="editmode">true to start the map in edit mode</param>
+        public GameShell(GameMap m ,bool editmode = false )
         {
-            InitializeComponent();            
+            InitializeComponent();
 
-            map = m;
-            try { tdc = TextureDataCollection.ReadCollection(map.TextureDataPath); }
-            catch { tdc = new TextureDataCollection(); return; }
-            
+            InitializeGraphics();
 
 
-            InitializeGraphics(map.gridWidth,map.gridHeight,map.getPNGPath(),map.GetSurfaces());
 
+            project = new GameProject();
+            project.AddMap("default", m);
+            currentmap = "default";
             //start drawing
             RenderingCancel = new CancellationTokenSource();
             RenderingTask = Task.Factory.StartNew(render,RenderingCancel.Token);
 
             editgamemode = editmode;
 
-            basepos = new SharpDX.Vector3(
-                    (-ClientSize.Width / 2) + (map.cellSize / 2),
-                    (-ClientSize.Height / 2) + (map.cellSize / 2),
-                    0);
-
             lastcellover = new SharpDX.Vector2();
+             
                         
         }
 
-        void InitializeGraphics(int width,int height,string spritesheetpath,Surface[] surfaces)
+        public GameShell(GameProject p,bool editmode = false)
         {
-            #region generate data
+            InitializeComponent();
 
-            
-            
-            //the grid
-            Size grid = new System.Drawing.Size(width, height );
-            uint gridvolume = (uint)(grid.Width * grid.Height);
-            
-            //generate the indexes to reference      
-            indexcount = gridvolume * 6;
-            uint[] indices = new uint[indexcount];
+            InitializeGraphics();
 
-            for (uint x = 0, y = 0; x < indexcount; dualincrease(ref x, 6, ref y, 4))
+            project = p;
+         
+            string[] mapnames = project.GetKeys();
+               
+            editgamemode = editmode;
+
+            lastcellover = new SharpDX.Vector2();
+            
+            foreach (string name in p.GetKeys())
             {
-                indices[x + 0] = 0 + y;
-                indices[x + 1] = 1 + y;
-                indices[x + 2] = 2 + y;
-                indices[x + 3] = 2 + y;
-                indices[x + 4] = 1 + y;
-                indices[x + 5] = 3 + y;
-            }     
+                project[name].InitializeGraphics(d, ClientSize.Width, ClientSize.Height);
+                
+            }
+
+            RenderingCancel = new CancellationTokenSource();
+            RenderingTask = Task.Factory.StartNew(render, RenderingCancel.Token);            
+
+        }
 
 
 
-            SharpDX.Matrix p = SharpDX.Matrix.OrthoOffCenterLH(0, ClientSize.Width, ClientSize.Height, 0, 1, 2);
-            SharpDX.Matrix v = SharpDX.Matrix.LookAtLH(new SharpDX.Vector3(0,0, -1), SharpDX.Vector3.Zero, SharpDX.Vector3.UnitY);
-            SharpDX.Matrix w = SharpDX.Matrix.Identity;
 
-            p.Transpose();
-            v.Transpose();
-            w.Transpose();
+        void InitializeGraphics()
+        {
 
-
-
-            VArgs va = new VArgs() 
-            { 
-                world = w, 
-                glbTrans = basepos,
-                cs = cellsize / 2f, 
-                texcoordbase = tdc.CellUnit
-            };
-
-            #endregion
-
-            #region create graphics objects
-
-            //create directx objects
-
-            //device and swap chain
             SharpDX.Direct3D11.Device.CreateWithSwapChain(SharpDX.Direct3D.DriverType.Hardware, SharpDX.Direct3D11.DeviceCreationFlags.Debug, new SharpDX.DXGI.SwapChainDescription()
             {
                 BufferCount = 4,
@@ -251,44 +216,10 @@ namespace STAR
                 Usage = SharpDX.DXGI.Usage.RenderTargetOutput
             }, out d, out sc);
 
-            //the render target
+
             target = SharpDX.Direct3D11.Texture2D.FromSwapChain<SharpDX.Direct3D11.Texture2D>(sc, 0);
             targetveiw = new SharpDX.Direct3D11.RenderTargetView(d, target);
-
-
-
-            //index buffer
-            ib = SharpDX.Direct3D11.Buffer.Create(d, SharpDX.Direct3D11.BindFlags.IndexBuffer,indices);
-
-            surfacedata = SharpDX.Direct3D11.Buffer.Create(d,surfaces,new SharpDX.Direct3D11.BufferDescription()
-            {
-                BindFlags = SharpDX.Direct3D11.BindFlags.ShaderResource,
-                CpuAccessFlags = SharpDX.Direct3D11.CpuAccessFlags.None,
-                OptionFlags = SharpDX.Direct3D11.ResourceOptionFlags.BufferStructured,
-                SizeInBytes = SharpDX.Utilities.SizeOf(surfaces),
-                StructureByteStride = System.Runtime.InteropServices.Marshal.SizeOf(typeof(Surface)),
-                Usage = SharpDX.Direct3D11.ResourceUsage.Default
-            });
-            surfacedataveiw = new SharpDX.Direct3D11.ShaderResourceView(d, surfacedata);
-
-            texturedata = SharpDX.Direct3D11.Buffer.Create(d, tdc.GetTexCoords(), new SharpDX.Direct3D11.BufferDescription() 
-            {
-                BindFlags = SharpDX.Direct3D11.BindFlags.ShaderResource,
-                CpuAccessFlags = SharpDX.Direct3D11.CpuAccessFlags.None,
-                OptionFlags = SharpDX.Direct3D11.ResourceOptionFlags.BufferStructured,
-                SizeInBytes = SharpDX.Utilities.SizeOf(tdc.GetTexCoords()),
-                StructureByteStride = System.Runtime.InteropServices.Marshal.SizeOf(typeof(SharpDX.Vector2)),
-                Usage = SharpDX.Direct3D11.ResourceUsage.Default
-            });
-            texturedataveiw = new SharpDX.Direct3D11.ShaderResourceView(d, texturedata);
-
-
-            P = SharpDX.Direct3D11.Buffer.Create<SharpDX.Matrix>(d, SharpDX.Direct3D11.BindFlags.ConstantBuffer, new SharpDX.Matrix[] { p });
-            V = SharpDX.Direct3D11.Buffer.Create<SharpDX.Matrix>(d, SharpDX.Direct3D11.BindFlags.ConstantBuffer, new SharpDX.Matrix[] { v });
-            Arg = SharpDX.Direct3D11.Buffer.Create<VArgs>(d, SharpDX.Direct3D11.BindFlags.ConstantBuffer, new VArgs[] { va });
-
-            surface = SharpDX.Direct3D11.Texture2D.FromFile<SharpDX.Direct3D11.Texture2D>(d, spritesheetpath);//the other side of TEST1.cmp
-            surfaceveiw = new SharpDX.Direct3D11.ShaderResourceView(d, surface);
+            
 
             sampler = new SharpDX.Direct3D11.SamplerState(d, new SharpDX.Direct3D11.SamplerStateDescription()
             {
@@ -304,33 +235,12 @@ namespace STAR
                 MipLodBias = 0                
             });
 
-            #endregion
 
-            #region set objects on the immediate context
-            //set the objects to the immeidate context
-
-
-            //input assembly
+                 
             d.ImmediateContext.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
-            d.ImmediateContext.InputAssembler.SetIndexBuffer(ib, SharpDX.DXGI.Format.R32_UInt, 0);
-
-            //vertex shader
             d.ImmediateContext.VertexShader.Set(new SharpDX.Direct3D11.VertexShader(d, File.ReadAllBytes("VertexShader.cso")));
-            d.ImmediateContext.VertexShader.SetConstantBuffers(0, P, V, Arg);
-            d.ImmediateContext.VertexShader.SetShaderResource(0, surfacedataveiw);
-            d.ImmediateContext.VertexShader.SetShaderResource(1, texturedataveiw);
-
-            //hull shader
-
-            //domain shader
-
-            //pixelshader
             d.ImmediateContext.PixelShader.Set(new SharpDX.Direct3D11.PixelShader(d, File.ReadAllBytes("PixelShader.cso")));
-            d.ImmediateContext.PixelShader.SetSampler(0, sampler);
-            d.ImmediateContext.PixelShader.SetShaderResource(0, surfaceveiw);
-            
-
-            //rasterizer
+                        
             d.ImmediateContext.Rasterizer.SetViewport(0, 0,ClientSize.Width,ClientSize.Height);
             d.ImmediateContext.Rasterizer.State = new SharpDX.Direct3D11.RasterizerState(d, new SharpDX.Direct3D11.RasterizerStateDescription()
             {
@@ -338,18 +248,15 @@ namespace STAR
                 FillMode = SharpDX.Direct3D11.FillMode.Solid               
             });           
             
-
-            //output
             d.ImmediateContext.OutputMerger.SetRenderTargets(targetveiw);
 
-            #endregion
 
             
         }
 
         void render()
         {
-
+            
             //todo: implement the cancellation token instead of the Power variable
 
             Power = true;
@@ -357,41 +264,50 @@ namespace STAR
             while (Power)
             {
                 //now we have the Gamemap object and it is ready to dynamically edit the surface data
-                if (change)
+
+                #region junk
+               /* need to fix this
+                if (surfaceChange)
                 {
                     d.ImmediateContext.UpdateSubresource(map.GetSurfaces(), surfacedata);
-                    change = false;
+                    surfaceChange = false;
                 }
+                */
 
-                if (editgamemode)
-                {
-                    VArgs va = new VArgs()
-                    {
-                         world = SharpDX.Matrix.Identity,
-                         glbTrans = basepos - newlook,
-                         cs = cellsize / 2f,
-                         texcoordbase = tdc.CellUnit
-                    };
 
-                    d.ImmediateContext.UpdateSubresource(ref va, Arg);
-                }
-
+                
+                
+                #endregion
 
                 //clear the screen
                 d.ImmediateContext.ClearRenderTargetView(targetveiw, SharpDX.Color.CornflowerBlue);
-                
+
+                foreach (GameMap pmap in project)
+                {
+                    if (editgamemode)
+                    {
+
+                        pmap.UpdateGraphics(d, newlook);
+
+                    }
+                    
+                    pmap.PrepareGraphics(d);
+
+                    d.ImmediateContext.DrawIndexed(Math.Abs(pmap.gridArea * 6), 0, 0);
+                }
+
                 //draw all tiles
-                d.ImmediateContext.DrawIndexed(System.Math.Abs((int)indexcount), 0, 0);
+               
 
                 //render to the screen
                 sc.Present(0, SharpDX.DXGI.PresentFlags.None);                
             }
         }
 
-        void dualincrease(ref uint x, uint a,ref uint y, uint b)
+        void dualincrease(ref uint x, uint a, ref uint y, uint b)
         {
             x += a;
-            y += b;            
+            y += b;
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -403,17 +319,12 @@ namespace STAR
             //shut'er down
             if ( d != null) d.Dispose();
             if ( sc != null) sc.Dispose();
-            if ( ib != null) ib.Dispose();
-            if ( surfacedata != null) surfacedata.Dispose();            
+         
             if ( target != null) target.Dispose();
             if ( targetveiw != null) targetveiw.Dispose();
-            if ( P != null) P.Dispose();
-            if ( V != null) V.Dispose();
-            if ( surfacedataveiw != null) surfacedataveiw.Dispose();
+  
             if ( sampler != null) sampler.Dispose();
-            if ( Arg != null) Arg.Dispose();
-            if ( texturedata != null) texturedata.Dispose();
-            if ( texturedataveiw != null) texturedataveiw.Dispose();
+
 
             base.OnClosing(e);
         }
@@ -424,15 +335,18 @@ namespace STAR
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            if (editgamemode)
             {
-                if (firstcatch)
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
+                    if (firstcatch)
+                    {
 
-                    old_X = (int)newlook.X + e.X;
-                    old_y = (int)newlook.Y + e.Y;
-                    firstcatch = false;
+                        old_X = (int)newlook.X + e.X;
+                        old_y = (int)newlook.Y + e.Y;
+                        firstcatch = false;
 
+                    }
                 }
             }
             base.OnMouseDown(e);
@@ -440,16 +354,19 @@ namespace STAR
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            if (editgamemode)
             {
-                if (!firstcatch)
-                {//this is the else for the onmousedown method
-                    lock (GameShell.locker)
-                    {
-                        newlook = new SharpDX.Vector3(old_X - e.X, old_y - e.Y, ms_z);
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    if (!firstcatch)
+                    {//this is the else for the onmousedown method
+                        lock (GameShell.locker)
+                        {
+                            newlook = new SharpDX.Vector3(old_X - e.X, old_y - e.Y, ms_z);
 
-                        change = true;
+                            surfaceChange = true;
 
+                        }
                     }
                 }
             }
@@ -462,19 +379,26 @@ namespace STAR
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            if (editgamemode)
             {
-                firstcatch = true;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    firstcatch = true;
 
-                old_X = (int)newlook.X;
-                old_y = (int)newlook.Y;
+                    old_X = (int)newlook.X;
+                    old_y = (int)newlook.Y;
+                }
             }
+
             base.OnMouseUp(e);
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
-        {                   
-            ms_z = e.Delta;
+        {
+            if (editgamemode)
+            {
+                ms_z = e.Delta;
+            }
             base.OnMouseWheel(e);
         }
         #endregion
@@ -487,18 +411,24 @@ namespace STAR
         private void GameShell_MouseDown(object sender, MouseEventArgs e)
         {
 
-
-        
-            GameShellMouseEventArgs args = GenerateGameShellMouseEventArgs(e);
-
-            if (args != null)
+            if (editgamemode)
             {
-                OnGameClick(args);
 
-                if (args.IsSurfaceSet)
+                GameShellMouseEventArgs args = GenerateGameShellMouseEventArgs(e);
+
+                if (args != null)
                 {
-                    map.For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
-                    change = true;
+                    OnGameClick(args);
+
+                    if (args.IsSurfaceSet)
+                    {
+                        foreach (string name in project.GetKeys())
+                        {//started to fix this
+                            project[name].For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
+                            surfaceChange = true;
+                        }
+                     
+                    }
                 }
             }
 
@@ -506,28 +436,26 @@ namespace STAR
 
         private void GameShell_MouseMove(object sender, MouseEventArgs e)
         {
-            
-           
-            GameShellMouseEventArgs args = GenerateGameShellMouseEventArgs(e);
-
-            if (args != null)
+            if (editgamemode)
             {
+                GameShellMouseEventArgs args = GenerateGameShellMouseEventArgs(e);
 
-                if (lastcellover != args.cellpos)
+                if (args != null)
                 {
-                    OnGameMouseMove(args);
-                    lastcellover = args.cellpos;
-                }
 
+                    if (lastcellover != args.cellpos)
+                    {
+                        OnGameMouseMove(args);
+                        lastcellover = args.cellpos;
 
-
-                if (args.IsSurfaceSet)
-                {
-                    map.For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
-                    change = true;
+                        if (args.IsSurfaceSet)
+                        {
+                            project[currentmap].For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
+                            surfaceChange = true;
+                        }
+                    }
                 }
             }
-
         }
 
         /// <summary>
@@ -540,7 +468,7 @@ namespace STAR
             {
                 MemoryStream ms = new MemoryStream();
 
-                new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(ms, map);
+                new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(ms, project[currentmap]);
 
                 ms.Close();
                 
@@ -566,18 +494,14 @@ namespace STAR
                 RenderingTask.Wait();
 
                 d.ImmediateContext.ClearState();
-                tdc.Clear();
 
-                map = m;
-                try { tdc = TextureDataCollection.ReadCollection(map.TextureDataPath); }
-                catch { tdc = new TextureDataCollection(); }
-
-                InitializeGraphics(map.gridWidth, map.gridHeight, map.getPNGPath(), map.GetSurfaces());
+                InitializeGraphics();
 
                 RenderingTask = new Task(render, RenderingCancel.Token);
                 RenderingTask.Start();
             }
         }
+
 
         GameShellMouseEventArgs GenerateGameShellMouseEventArgs(MouseEventArgs e)
         {
@@ -587,14 +511,14 @@ namespace STAR
             //find the cell at that position
 
 
-            int x = (int)(p.X + newlook.X) / map.cellSize;
-            int y = (int)(p.Y + newlook.Y) / map.cellSize;
-            
-           
+            int x = (int)(p.X + newlook.X) / project[currentmap].cellSize;
+            int y = (int)(p.Y + newlook.Y) / project[currentmap].cellSize;
 
-            if (x > -1 && y > -1 && x < map.gridWidth && y < map.gridHeight)
+
+
+            if (x > -1 && y > -1 && x < project[currentmap].gridWidth && y < project[currentmap].gridHeight)
             {
-                return new GameShellMouseEventArgs(map[x, y], new SharpDX.Vector2(x, y), e);
+                return new GameShellMouseEventArgs(project[currentmap][x, y], new SharpDX.Vector2(x, y), e);
             }
             else return null;           
 

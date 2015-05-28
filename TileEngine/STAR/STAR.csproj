@@ -55,7 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="En-gin\TileEngine.cs" />
+    <None Include="En-gin\TileEngine.cs" />
+    <Compile Include="GameProject.cs" />
     <Compile Include="GameShell.cs">
       <SubType>Form</SubType>
     </Compile>
