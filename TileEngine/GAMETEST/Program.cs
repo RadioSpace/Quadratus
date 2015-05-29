@@ -34,7 +34,7 @@ namespace GAMETEST
           
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new STAR.GameShell(project));
+            Application.Run(new STAR.GameShell(project,true));
 
         }
     }

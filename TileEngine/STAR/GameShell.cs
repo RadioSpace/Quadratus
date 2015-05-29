@@ -43,15 +43,15 @@ namespace STAR
 
         #region util
 
-        bool Power = true;
+        bool power;
+        bool Power { get { lock (locker) { return power; } } set { lock (locker) { power = value; } } }
 
-        
-        float cellsize = 24;
-
+        bool paused = false;
+        bool Paused { get { lock (locker) { return paused; } } set { lock (locker) { paused = value; } } }
 
         GameProject project;
-        string currentMap;
-        string currentmap { get { lock (locker) { return currentMap; } } set { lock (locker) { currentMap = value; } } } 
+        string currentmap;
+        string CurrentMap { get { lock (locker) { return currentmap; } } set { lock (locker) { currentmap = value; } } } 
         string[] mapnames;
 
         Task RenderingTask;
@@ -63,6 +63,7 @@ namespace STAR
         int ms_z;
 
         SharpDX.Vector3 newlook;
+        SharpDX.Vector3 NewLook { get { lock (locker) { return newlook; } } set { lock (locker) { newlook = value; } } }
         
 
         /// <summary>
@@ -71,12 +72,14 @@ namespace STAR
         SharpDX.Vector2 lastcellover;
 
         bool firstcatch = true;
-        bool surfaceChange = false;
+
+        bool surfacechange = false;
+        bool SurfaceChange { get { lock (locker) { return surfacechange; } } set { lock (locker) { surfacechange = value; } } }
 
         bool editgamemode = false;
+        bool EditGameMode { get { lock (locker) { return editgamemode; } } set { lock (locker) { editgamemode = value; } } }
 
         #endregion
-
 
         #region events
 
@@ -90,7 +93,7 @@ namespace STAR
             {
                 lock (locker)
                 {
-                    if (editgamemode)
+                    if (EditGameMode)
                     {
                         gameclick += value;
                     }
@@ -124,7 +127,7 @@ namespace STAR
             {
                 lock (locker)
                 {
-                    if (editgamemode)
+                    if (EditGameMode)
                     {
                         gamemousemove += value;
                     }
@@ -159,8 +162,8 @@ namespace STAR
 
          
             mapnames = project.GetKeys();
-            currentmap = mapnames[0];
-            editgamemode = editmode;
+            CurrentMap = mapnames[0];
+            EditGameMode = editmode;
 
             lastcellover = new SharpDX.Vector2();
             
@@ -171,7 +174,7 @@ namespace STAR
             }
 
             RenderingCancel = new CancellationTokenSource();
-            RenderingTask = Task.Factory.StartNew(render, RenderingCancel.Token);            
+            RenderingTask = Task.Factory.StartNew(render, RenderingCancel.Token);      
 
         }
 
@@ -240,31 +243,42 @@ namespace STAR
 
             while (Power)
             {
-                //now we have the Gamemap object and it is ready to dynamically edit the surface data
 
-                #region junk
-           
-                if (surfaceChange && currentMap != null)
+                
+                while (Paused)
                 {
-                    project[currentmap].UpdateSurfaces(d);
-                    surfaceChange = false;
+                    Thread.Sleep(100);
                 }
                 
 
-                #endregion
+
+
+
+                lastcellover = new SharpDX.Vector2();
+          
+           
+                if (SurfaceChange && currentmap != null)
+                {
+                    project[CurrentMap].UpdateSurfaces(d);
+                    SurfaceChange = false;
+                }
+                
+
+            
                 //clear the screen
                 d.ImmediateContext.ClearRenderTargetView(targetveiw, SharpDX.Color.CornflowerBlue);
 
                 foreach (GameMap pmap in project)
-                {
-                    if (editgamemode)
+                {                    
+                    pmap.PrepareGraphics(d);
+
+                    if (EditGameMode)
                     {
 
-                        pmap.UpdateGraphics(d, newlook);
+                        pmap.UpdateGraphics(d, NewLook);
 
                     }
-                    
-                    pmap.PrepareGraphics(d);
+
 
                     d.ImmediateContext.DrawIndexed(Math.Abs(pmap.gridArea * 6), 0, 0);
                 }
@@ -309,15 +323,15 @@ namespace STAR
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (editgamemode)
+            if (EditGameMode)
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     if (firstcatch)
                     {
 
-                        old_X = (int)newlook.X + e.X;
-                        old_y = (int)newlook.Y + e.Y;
+                        old_X = (int)NewLook.X + e.X;
+                        old_y = (int)NewLook.Y + e.Y;
                         firstcatch = false;
 
                     }
@@ -328,7 +342,7 @@ namespace STAR
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            if (editgamemode)
+            if (EditGameMode)
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
@@ -336,9 +350,9 @@ namespace STAR
                     {//this is the else for the onmousedown method
                         lock (GameShell.locker)
                         {
-                            newlook = new SharpDX.Vector3(old_X - e.X, old_y - e.Y, ms_z);
+                            NewLook = new SharpDX.Vector3(old_X - e.X, old_y - e.Y, ms_z);
 
-                            surfaceChange = true;
+                            SurfaceChange = true;
 
                         }
                     }
@@ -353,14 +367,14 @@ namespace STAR
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            if (editgamemode)
+            if (EditGameMode)
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     firstcatch = true;
 
-                    old_X = (int)newlook.X;
-                    old_y = (int)newlook.Y;
+                    old_X = (int)NewLook.X;
+                    old_y = (int)NewLook.Y;
                 }
             }
 
@@ -369,7 +383,7 @@ namespace STAR
 
         protected override void OnMouseWheel(MouseEventArgs e)
         {
-            if (editgamemode)
+            if (EditGameMode)
             {
                 ms_z = e.Delta;
             }
@@ -385,7 +399,7 @@ namespace STAR
         private void GameShell_MouseDown(object sender, MouseEventArgs e)
         {
 
-            if (editgamemode)
+            if (EditGameMode)
             {
 
                 GameShellMouseEventArgs args = GenerateGameShellMouseEventArgs(e);
@@ -394,10 +408,10 @@ namespace STAR
                 {
                     OnGameClick(args);
 
-                    if (args.IsSurfaceSet && currentMap != null)
+                    if (args.IsSurfaceSet && currentmap != null)
                     {
-                        project[currentmap].For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
-                        surfaceChange = true;
+                        project[CurrentMap].For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
+                        SurfaceChange = true;
                     }
                 }
             }
@@ -406,7 +420,7 @@ namespace STAR
 
         private void GameShell_MouseMove(object sender, MouseEventArgs e)
         {
-            if (editgamemode)
+            if (EditGameMode)
             {
                 GameShellMouseEventArgs args = GenerateGameShellMouseEventArgs(e);
 
@@ -417,10 +431,10 @@ namespace STAR
                         OnGameMouseMove(args);
                         lastcellover = args.cellpos;
 
-                        if (args.IsSurfaceSet && currentMap != null)
+                        if (args.IsSurfaceSet && currentmap != null)
                         {
-                            project[currentmap].For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
-                            surfaceChange = true;
+                            project[CurrentMap].For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
+                            SurfaceChange = true;
                         }
                     }
                 }
@@ -433,11 +447,11 @@ namespace STAR
         /// <returns>a stream containg the game map</returns>
         public byte[] SaveMap()
         {
-            if (editgamemode && currentMap != null)
+            if (EditGameMode && currentmap != null)
             {
                 MemoryStream ms = new MemoryStream();
 
-                new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(ms, project[currentmap]);
+                new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(ms, project[CurrentMap]);
 
                 ms.Close();
                 
@@ -458,36 +472,46 @@ namespace STAR
         {
             bool result = false;
 
-            if(editgamemode)
+            if(EditGameMode && Paused)
             {
                 m.InitializeGraphics(d,ClientSize.Width,ClientSize.Height);
 
                 project.AddMap(name, m);
-                mapnames = project.GetKeys();
+                mapnames = project.GetKeys();               
 
                 lastcellover = new SharpDX.Vector2();
                 
                 result = true;
+
+                
             }
+
+
 
             return result;
         }
 
         public void ClearProject()
         {
-            if (editgamemode)
+            if (EditGameMode && Paused)
             {
                 project.Clear();
-                currentMap = null;
+                currentmap = null;
             }
         }
 
         public void SelectMap(string name)
         {
-            if (mapnames.Contains(name) && currentMap != null)
+            if (mapnames.Contains(name) && Paused)
             {
-                currentmap = name;
+               CurrentMap = name;
             }
+
+        }
+
+        public void PauseGameToggle()
+        {
+            Paused = !Paused;
         }
 
         GameShellMouseEventArgs GenerateGameShellMouseEventArgs(MouseEventArgs e)
@@ -496,17 +520,17 @@ namespace STAR
             Point p = e.Location;
 
             //find the cell at that position
-            if (currentMap != null)
+            if (currentmap != null)
             {
 
-                int x = (int)(p.X + newlook.X) / project[currentmap].cellSize;
-                int y = (int)(p.Y + newlook.Y) / project[currentmap].cellSize;
+                int x = (int)(p.X + NewLook.X) / project[CurrentMap].cellSize;
+                int y = (int)(p.Y + NewLook.Y) / project[CurrentMap].cellSize;
 
 
 
-                if (x > -1 && y > -1 && x < project[currentmap].gridWidth && y < project[currentmap].gridHeight)
+                if (x > -1 && y > -1 && x < project[CurrentMap].gridWidth && y < project[CurrentMap].gridHeight)
                 {
-                    return new GameShellMouseEventArgs(project[currentmap][x, y], new SharpDX.Vector2(x, y), e);
+                    return new GameShellMouseEventArgs(project[CurrentMap][x, y], new SharpDX.Vector2(x, y), e);
                 }
                 else return null;
             }

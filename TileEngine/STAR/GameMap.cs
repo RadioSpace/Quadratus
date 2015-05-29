@@ -307,13 +307,15 @@ namespace STAR
         public void Dispose()
         {
             if (ib != null) ib.Dispose();
-            if (surfacedata != null) surfacedata.Dispose();   
+            if (surfacedata != null) surfacedata.Dispose();
+            if (surfacedataveiw != null) surfacedataveiw.Dispose();
+            if (texturedata != null) texturedata.Dispose();
+            if (texturedataveiw != null) texturedataveiw.Dispose();
             if (P != null) P.Dispose();
             if (V != null) V.Dispose();
-            if (surfacedataveiw != null) surfacedataveiw.Dispose();
+            if (Arg != null) Arg.Dispose();
             if (tex != null) tex.Dispose();
             if (texview != null) texview.Dispose();
-
         }
     }
 

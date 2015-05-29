@@ -83,6 +83,8 @@ namespace TileMapMaker
             NewMapDialog nmd = new NewMapDialog();
             if (nmd.ShowDialog() ?? false)
             {
+                shell.PauseGameToggle();
+
                 shell.ClearProject();
 
 
@@ -93,7 +95,8 @@ namespace TileMapMaker
                 string newmapname = Guid.NewGuid().ToString("N");
                 maploaded = shell.UploadMap(newmapname, map);
                 shell.SelectMap(newmapname);
-                
+
+                shell.PauseGameToggle();
 
 
                 if (maploaded)
@@ -178,8 +181,6 @@ namespace TileMapMaker
 
         void ApplicationOpenOperation(object sender, ExecutedRoutedEventArgs args)
         {
-
-
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "Game Map|*.gmap";
             ofd.Title = "find a map to load";
@@ -205,12 +206,41 @@ namespace TileMapMaker
 
                     try
                     {
-                        shell.UploadMap(Guid.NewGuid().ToString("N"),(GameMap)new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Deserialize(ms));
+                        shell.PauseGameToggle();
+
+                        shell.ClearProject();
+
+                        string newmapname = Guid.NewGuid().ToString("N");
+                        GameMap map = (GameMap)new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Deserialize(ms);
+                        bool maploaded = shell.UploadMap(newmapname,map);
+
+                        shell.SelectMap(newmapname);
+
+                        shell.PauseGameToggle();
+
+                        if (maploaded)
+                        {
+                            TextureDataCollection tdc;
+                            try { tdc = TextureDataCollection.ReadCollection(map.GetCMPPath()); }
+                            catch { tdc = new TextureDataCollection(); }
+
+                            foreach (TextureData td in tdc)
+                            {
+                                texturedata.Add(td);
+                            }
+
+                            bi = new BitmapImage(new Uri(map.getPNGPath()));
+
+                            texsize = new SharpDX.Size2((int)(bi.PixelWidth * tdc.CellUnit.u), (int)(bi.PixelHeight * tdc.CellUnit.v));
+                        }
+                        else MessageBox.Show("could not load map"); maploaded = false; 
+
+
                         App.ProjectState = ProjectState.Saved;
                     }
                     catch (Exception EX)
                     {
-                        MessageBox.Show("could not open map");
+                        MessageBox.Show("could not open map : " + EX.Message);
 
                     }
                 }

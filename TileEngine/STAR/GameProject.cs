@@ -82,7 +82,14 @@ namespace STAR
         }
 
         public void Clear()
-        { maps.Clear(); }
+        {
+            foreach(GameMap gm in maps.Values)
+            {
+                gm.Dispose();
+            }
+            maps.Clear(); 
+
+        }
 
         public IEnumerator<GameMap> GetEnumerator()
         {
