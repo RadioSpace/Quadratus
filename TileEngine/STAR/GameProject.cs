@@ -11,30 +11,37 @@ namespace STAR
     [Serializable]
     public class GameProject : IEnumerable<GameMap>,IDisposable
     {
+        static object locker = new object();
 
         Dictionary<string, GameMap> maps;       
-
+        
 
         public GameProject()
         {
             maps = new Dictionary<string, GameMap>();
         }
 
-        public void AddMap(string name, GameMap map)
+        public bool AddMap(string name, GameMap map)
         {
-            if (!maps.ContainsKey(name))
+            lock (locker)
             {
-                
-
-                maps.Add(name, map);
+                if (!maps.ContainsKey(name))
+                {
+                    maps.Add(name, map);
+                    return true;
+                }
+                else return false;
             }
         }
 
         public void RemoveMap(string name)
         {
-            if (maps.ContainsKey(name))
+            lock (locker)
             {
-                maps.Remove(name);
+                if (maps.ContainsKey(name))
+                {
+                    maps.Remove(name);
+                }
             }
         }
 
@@ -42,52 +49,68 @@ namespace STAR
         {
             get
             {
-                if (maps.ContainsKey(name ?? ""))
+                lock (locker)
                 {
-                    return maps[name];
+                    if (maps.ContainsKey(name ?? ""))
+                    {
+                        return maps[name];
+                    }
+                    else { throw new IndexOutOfRangeException(name + " does not exist"); }
                 }
-                else { throw new IndexOutOfRangeException(name + " does not exist"); }
             }
         }
 
         public bool Contains(string name)
         {
-            return maps.ContainsKey(name);
+            lock (locker){ return maps.ContainsKey(name);}
         }
 
         public string[] GetKeys()
         {
-            return maps.Keys.ToArray();
+            lock (locker) { return maps.Keys.ToArray(); }
         }
         
         public void UpdateGlobal(Device d,Vector3 gpos)
         {
-            foreach(string name in maps.Keys)
+            lock (locker)
             {
-
-                maps[name].UpdateGraphics(d, gpos);
-
+                foreach (string name in maps.Keys)
+                {
+                    maps[name].UpdateGraphics(d, gpos);
+                }
             }
         }
 
+        public void Clear()
+        { maps.Clear(); }
+
         public IEnumerator<GameMap> GetEnumerator()
         {
-            return maps.Values.AsEnumerable().GetEnumerator();
+            lock (locker)
+            {
+                return maps.Values.AsEnumerable().GetEnumerator();
+            }
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return maps.Values.GetEnumerator();
+            lock (locker)
+            {
+                return maps.Values.GetEnumerator();
+            }
         }
 
         public void Dispose()
         {
-            foreach(GameMap gm in maps.Values)
+            lock (locker)
             {
-                gm.Dispose();
-            }
+                foreach (GameMap gm in maps.Values)
+                {
+                    gm.Dispose();
+                }
 
-            maps.Clear();
+                maps.Clear();
+            }
         }
     }
 }

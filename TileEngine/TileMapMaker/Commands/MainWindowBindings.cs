@@ -73,25 +73,27 @@ namespace TileMapMaker
                     ApplicationNewOperation,
                     (Sender, args) => { args.CanExecute = App.ProjectState == ProjectState.Saved || App.ProjectState == ProjectState.Empty; }
                  ));
-
-
         }
 
-        private void ApplicationNewOperation(object sender, ExecutedRoutedEventArgs e)
+
+
+        void ApplicationNewOperation(object sender, ExecutedRoutedEventArgs e)
         {
 
             NewMapDialog nmd = new NewMapDialog();
             if (nmd.ShowDialog() ?? false)
             {
+                shell.ClearProject();
+
+
                 GameMap map = new GameMap(nmd.NewMapCmpPath, nmd.NewMapWidth, nmd.NewMapHeight);
                 bool maploaded = false;
 
-                try
-                {
-                    shell.LoadMap(map);
-                    maploaded = true;
-                }
-                catch { MessageBox.Show("could not load map"); maploaded = false; }
+               
+                string newmapname = Guid.NewGuid().ToString("N");
+                maploaded = shell.UploadMap(newmapname, map);
+                shell.SelectMap(newmapname);
+                
 
 
                 if (maploaded)
@@ -105,10 +107,11 @@ namespace TileMapMaker
                         texturedata.Add(td);
                     }
 
-                    bi = new BitmapImage(new Uri(System.IO.Path.ChangeExtension(map.GetCMPPath(), ".png")));
+                    bi = new BitmapImage(new Uri(map.getPNGPath()));
 
                     texsize = new SharpDX.Size2((int)(bi.PixelWidth * tdc.CellUnit.u), (int)(bi.PixelHeight * tdc.CellUnit.v));
                 }
+                else MessageBox.Show("could not load map"); maploaded = false; 
 
                 
 
@@ -116,8 +119,6 @@ namespace TileMapMaker
             }
 
         }
-
-
 
         void TextureChangeOperation(object sender,ExecutedRoutedEventArgs args )
         {
@@ -204,7 +205,7 @@ namespace TileMapMaker
 
                     try
                     {
-                        shell.LoadMap((GameMap)new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Deserialize(ms));
+                        shell.UploadMap(Guid.NewGuid().ToString("N"),(GameMap)new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Deserialize(ms));
                         App.ProjectState = ProjectState.Saved;
                     }
                     catch (Exception EX)

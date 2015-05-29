@@ -50,7 +50,8 @@ namespace STAR
 
 
         GameProject project;
-        string currentmap;
+        string currentMap;
+        string currentmap { get { lock (locker) { return currentMap; } } set { lock (locker) { currentMap = value; } } } 
         string[] mapnames;
 
         Task RenderingTask;
@@ -243,18 +244,14 @@ namespace STAR
 
                 #region junk
            
-                if (surfaceChange)
+                if (surfaceChange && currentMap != null)
                 {
                     project[currentmap].UpdateSurfaces(d);
                     surfaceChange = false;
                 }
                 
 
-
-                
-                
                 #endregion
-
                 //clear the screen
                 d.ImmediateContext.ClearRenderTargetView(targetveiw, SharpDX.Color.CornflowerBlue);
 
@@ -397,7 +394,7 @@ namespace STAR
                 {
                     OnGameClick(args);
 
-                    if (args.IsSurfaceSet)
+                    if (args.IsSurfaceSet && currentMap != null)
                     {
                         project[currentmap].For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
                         surfaceChange = true;
@@ -420,7 +417,7 @@ namespace STAR
                         OnGameMouseMove(args);
                         lastcellover = args.cellpos;
 
-                        if (args.IsSurfaceSet)
+                        if (args.IsSurfaceSet && currentMap != null)
                         {
                             project[currentmap].For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
                             surfaceChange = true;
@@ -436,7 +433,7 @@ namespace STAR
         /// <returns>a stream containg the game map</returns>
         public byte[] SaveMap()
         {
-            if (editgamemode)
+            if (editgamemode && currentMap != null)
             {
                 MemoryStream ms = new MemoryStream();
 
@@ -454,29 +451,40 @@ namespace STAR
         }
 
         /// <summary>
-        /// laods a map into the game
+        /// Uploads a map into the game in edit mode
         /// </summary>
-        /// <param name="m">the map to load into the game</param>
-        public void LoadMap(GameMap m)
+        /// <param name="m">the map to load into the game</param>       
+        public bool UploadMap(string name,GameMap m)
+        {
+            bool result = false;
+
+            if(editgamemode)
+            {
+                m.InitializeGraphics(d,ClientSize.Width,ClientSize.Height);
+
+                project.AddMap(name, m);
+                mapnames = project.GetKeys();
+
+                lastcellover = new SharpDX.Vector2();
+                
+                result = true;
+            }
+
+            return result;
+        }
+
+        public void ClearProject()
         {
             if (editgamemode)
             {
-                Power = false;
-
-                RenderingTask.Wait();
-
-                d.ImmediateContext.ClearState();
-
-                InitializeGraphics();
-
-                RenderingTask = new Task(render, RenderingCancel.Token);
-                RenderingTask.Start();
+                project.Clear();
+                currentMap = null;
             }
         }
 
         public void SelectMap(string name)
         {
-            if (mapnames.Contains(name))
+            if (mapnames.Contains(name) && currentMap != null)
             {
                 currentmap = name;
             }
@@ -488,18 +496,21 @@ namespace STAR
             Point p = e.Location;
 
             //find the cell at that position
-
-
-            int x = (int)(p.X + newlook.X) / project[currentmap].cellSize;
-            int y = (int)(p.Y + newlook.Y) / project[currentmap].cellSize;
-
-
-
-            if (x > -1 && y > -1 && x < project[currentmap].gridWidth && y < project[currentmap].gridHeight)
+            if (currentMap != null)
             {
-                return new GameShellMouseEventArgs(project[currentmap][x, y], new SharpDX.Vector2(x, y), e);
+
+                int x = (int)(p.X + newlook.X) / project[currentmap].cellSize;
+                int y = (int)(p.Y + newlook.Y) / project[currentmap].cellSize;
+
+
+
+                if (x > -1 && y > -1 && x < project[currentmap].gridWidth && y < project[currentmap].gridHeight)
+                {
+                    return new GameShellMouseEventArgs(project[currentmap][x, y], new SharpDX.Vector2(x, y), e);
+                }
+                else return null;
             }
-            else return null;           
+            else return null;
 
         }
 

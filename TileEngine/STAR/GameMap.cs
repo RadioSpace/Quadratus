@@ -170,7 +170,7 @@ namespace STAR
         /// <summary>
         /// initializes the directx objects for the map
         /// </summary>
-        /// <param name="ClientWidth">the windows cliaent width</param>
+        /// <param name="ClientWidth">the windows client width</param>
         /// <param name="ClientHeight">the windows client height</param>
         /// <param name="cellUnit">a texture data collections cell unit property</param>
         public void InitializeGraphics(Device d,int ClientWidth , int ClientHeight)
@@ -288,7 +288,6 @@ namespace STAR
 
 
             //pixelshader
-
             d.ImmediateContext.PixelShader.SetShaderResource(0, texview);
         }
 
