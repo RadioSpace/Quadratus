@@ -1,4 +1,4 @@
-﻿<Window x:Class="TileMapMaker.NewMapDialog"
+﻿<Window x:Class="TileMapMaker.Dialogs.NewMapDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="NewMapDialog" Height="300" Width="300" >

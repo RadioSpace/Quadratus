@@ -179,8 +179,6 @@ namespace STAR
         }
 
 
-
-
         void InitializeGraphics()
         {
 
@@ -500,12 +498,14 @@ namespace STAR
             }
         }
 
-        public void SelectMap(string name)
+        public GameMap SelectMap(string name)
         {
             if (mapnames.Contains(name) && Paused)
             {
-               CurrentMap = name;
+                CurrentMap = name;
+                return project[name];
             }
+            else {return null; }
 
         }
 

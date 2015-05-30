@@ -8,13 +8,15 @@ using SharpDX.Direct3D11;
 
 namespace STAR
 {
+    /// <summary>
+    /// holds information about multiple maps that can be rendered at he same time
+    /// </summary>
     [Serializable]
     public class GameProject : IEnumerable<GameMap>,IDisposable
     {
         static object locker = new object();
 
         Dictionary<string, GameMap> maps;       
-        
 
         public GameProject()
         {
@@ -90,6 +92,17 @@ namespace STAR
             maps.Clear(); 
 
         }
+
+        public TextureDataCollection GetTextureData(string name)
+        { 
+            if(maps.ContainsKey(name))
+            {
+                return maps[name].TDC;
+            }
+
+            return null;
+        }
+
 
         public IEnumerator<GameMap> GetEnumerator()
         {

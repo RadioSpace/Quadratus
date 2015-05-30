@@ -33,6 +33,38 @@ namespace TileMapMaker.Commands
         /// </summary>
         public static RoutedCommand ChangeColor = new RoutedCommand();
 
+        /// <summary>
+        /// Add a new map to the Project
+        /// </summary>
+        public static RoutedCommand Createmap = new RoutedCommand();
+
+        /// <summary>
+        /// load a map from a file
+        /// </summary>
+        public static RoutedCommand ImportMap = new RoutedCommand();
+
+        /// <summary>
+        /// remove a map from the project
+        /// </summary>
+        public static RoutedCommand RemoveMap = new RoutedCommand();
+        
+        /// <summary>
+        /// exports a map to a file
+        /// </summary>
+        public static RoutedCommand ExportMap = new RoutedCommand();
+
+        /// <summary>
+        /// clear the project of all maps
+        /// </summary>
+        public static RoutedCommand ClearProject = new RoutedCommand();
+
+        /// <summary>
+        /// Change the selected Map 
+        /// </summary>
+        public static RoutedCommand SelectMap = new RoutedCommand();
+ 
+
+
 
 
         static MapEditCommands()

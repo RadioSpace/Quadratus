@@ -34,6 +34,7 @@ namespace TileMapMaker
         
         BitmapImage bi;
         SharpDX.Size2 texsize;
+        string currentMap;
 
         ObservableCollection<TextureData> texturedata;
 
@@ -54,7 +55,7 @@ namespace TileMapMaker
 
             GameProject project = new GameProject();
             project.AddMap("default",new GameMap("dev1.cmp",1,1));
-
+            currentMap = "default";
             
             shell = new GameShell(project, true);
             shell.SelectMap("default");
@@ -226,6 +227,14 @@ namespace TileMapMaker
         private void cellProps_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
 
+        }
+
+        private void MapListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Commands.MapEditCommands.SelectMap.CanExecute(e,this))
+            {
+                Commands.MapEditCommands.SelectMap.Execute(e, this);
+            }
         }
 
     }

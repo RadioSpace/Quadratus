@@ -71,5 +71,11 @@ namespace TileMapMaker.Controls
                 TextureViewer.EndInit();
             }
         }
+
+        public void Reset()
+        {
+            TextureList.DataContext = null;
+            TextureList.Items.Clear();
+        }
     }
 }

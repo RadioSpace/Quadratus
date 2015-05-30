@@ -1,0 +1,46 @@
+﻿<Window x:Class="TileMapMaker.Dialogs.InitializeProjectDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="InitializeProjectDialog" Height="219" Width="300">
+    <Grid Margin="0,0,0,-9">
+        <StackPanel Margin="0,10">
+            <TextBlock Text="Please add a Map. the project cannot be null" Height="26" Background="#FFF7EBCA"/>
+            <Button Name="newMapButton" Content="New Map" Height="51" Click="newMapButton_Click">
+                <Button.Background>
+                    <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                        <GradientStop Color="#FFDFF7BC" Offset="0"/>
+                        <GradientStop Color="#FFEBEBEB" Offset="0.5"/>
+                        <GradientStop Color="#FFDDDDDD" Offset="0.5"/>
+                        <GradientStop Color="#FF6FB86B" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+            <Button Name="importMapButton" Content="Import Map" Height="58" Click="importMapButton_Click">
+                <Button.Background>
+                    <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                        <GradientStop Color="#FFDFF7BC" Offset="0"/>
+                        <GradientStop Color="#FFEBEBEB" Offset="0.5"/>
+                        <GradientStop Color="#FFDDDDDD" Offset="0.5"/>
+                        <GradientStop Color="#FF6FB86B" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+
+
+            <Button Name="cancelButton" Content="Cancel" DockPanel.Dock="Right" Click="cancelButton_Click">
+                <Button.Background>
+                    <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                        <GradientStop Color="#FFFFD3CE" Offset="0"/>
+                        <GradientStop Color="#FFEBEBEB" Offset="0.5"/>
+                        <GradientStop Color="#FFE0D1CF" Offset="0.5"/>
+                        <GradientStop Color="#FFCF7067" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+
+
+
+
+        </StackPanel>
+    </Grid>
+</Window>

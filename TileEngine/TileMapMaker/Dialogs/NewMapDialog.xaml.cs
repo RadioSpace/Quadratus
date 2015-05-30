@@ -13,7 +13,7 @@ using System.Windows.Shapes;
 
 using Microsoft.Win32;
 
-namespace TileMapMaker
+namespace TileMapMaker.Dialogs
 {
     /// <summary>
     /// Interaction logic for NewMapDialog.xaml

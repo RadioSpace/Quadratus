@@ -106,6 +106,7 @@ namespace STAR
 
         [NonSerialized]
         TextureDataCollection tdc;
+        public TextureDataCollection TDC { get { return tdc; } }
 
         [NonSerialized]
         Texture2D tex;

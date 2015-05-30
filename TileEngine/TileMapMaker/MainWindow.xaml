@@ -23,9 +23,34 @@
             <Menu>
                 <MenuItem Header="File">
                     <MenuItem.Items>
-                        <MenuItem Header="New Map" Command="New"/>
-                        <MenuItem Header="Save Map" Command="Save"/>
-                        <MenuItem Header="Open Map" Command="Open"/>
+                        <MenuItem Header="New Project" Command="New"/>
+                        <MenuItem Header="Save Project" Command="Save"/>
+                        <MenuItem Header="Open Project" Command="Open"/>
+
+                    </MenuItem.Items>
+
+                </MenuItem>
+                <MenuItem Header="Project">
+                    <MenuItem.Items>
+
+                        <MenuItem Header="Add Map">
+                            <MenuItem.Items>
+                                <MenuItem Header="Create Map" Command="{x:Static d:MapEditCommands.Createmap}"/>
+                                <MenuItem Header="Import Map" Command="{x:Static d:MapEditCommands.ImportMap}"/>
+                            </MenuItem.Items>
+                        </MenuItem>
+
+                        <MenuItem Header="Remove Map" Command="{x:Static d:MapEditCommands.RemoveMap}"/>
+
+
+                        <Separator />
+
+
+                        <MenuItem Header="Export Map" Command="{x:Static d:MapEditCommands.ExportMap}"/>
+                        <Separator/>
+
+                        <MenuItem Header="Clear project maps" Command="{x:Static d:MapEditCommands.ClearProject}"/>
+
 
                     </MenuItem.Items>
                 </MenuItem>
@@ -44,13 +69,16 @@
                     </WindowsFormsHost>
                     <StackPanel Orientation="Horizontal">
                         <Grid Width="310" Height="150" Background="Yellow">
-                            <!--Game Shell Properties-->
+                            <ListBox Name="MapListBox" ItemsSource="{Binding}" SelectionChanged="MapListBox_SelectionChanged"/>
                         </Grid>
                         <Grid Width="310" Height="150" Background="Red">
-                            <!--Selected Cell Properties-->
+                            <!--Selected Map Properties-->
                         </Grid>
                     </StackPanel>
                 </StackPanel>
+                
+                
+                
                 <StackPanel Width="432">
 
                     <Menu>
