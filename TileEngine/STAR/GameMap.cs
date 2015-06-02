@@ -104,6 +104,13 @@ namespace STAR
         [NonSerialized]
         Vector3 basepos;
 
+        //  //////////////////////////////////////////
+        [NonSerialized]
+        public Vector3 newlook;
+         
+        //   ////////////////////////////////////////
+
+
         [NonSerialized]
         TextureDataCollection tdc;
         public TextureDataCollection TDC { get { return tdc; } }
@@ -177,6 +184,8 @@ namespace STAR
         public void InitializeGraphics(Device d,int ClientWidth , int ClientHeight)
         {
             #region data
+            changed = false;
+
             tdc = TextureDataCollection.ReadCollection(texturedatapath);   
             Vector2[] textureData = tdc.GetTexCoords();
 
@@ -222,7 +231,7 @@ namespace STAR
             #endregion
 
 
-            #region create graphics  objects
+            #region create graphics objects
             //index buffer
             ib = SharpDX.Direct3D11.Buffer.Create(d, SharpDX.Direct3D11.BindFlags.IndexBuffer, indices);
 
@@ -259,7 +268,7 @@ namespace STAR
             #endregion
         }
 
-        public void UpdateGraphics(Device d,Vector3 args)
+        public void UpdateGraphics(Device d)
         {
             Matrix w = Matrix.Identity;
             w.Transpose();
@@ -267,7 +276,7 @@ namespace STAR
             VArgs varg = new VArgs() 
             {
                 cs = cellsize/2,
-                glbTrans =  basepos - args,
+                glbTrans =  basepos - NewLook,
                 texcrdbase = tdc.CellUnit,
                 world = w//yeah, i know          
             };

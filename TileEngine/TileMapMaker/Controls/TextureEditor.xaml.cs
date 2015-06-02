@@ -22,7 +22,7 @@ namespace TileMapMaker.Controls
     /// </summary>
     public partial class TextureEditor : UserControl
     {
-        TextureData[] texturedata;
+        ObservableCollection<TextureData> texturedata;
         BitmapImage spritesheet;
         SharpDX.Size2 texsize;
 
@@ -39,7 +39,12 @@ namespace TileMapMaker.Controls
             
             spritesheet = sheet;
             texsize = ts;
-            texturedata = data;
+
+            foreach(TextureData td in data)
+            {
+                texturedata.Add(td);
+            }
+        
 
             TextureList.DataContext = texturedata;
         }
@@ -74,8 +79,7 @@ namespace TileMapMaker.Controls
 
         public void Reset()
         {
-            TextureList.DataContext = null;
-            TextureList.Items.Clear();
+            texturedata.Clear();
         }
     }
 }

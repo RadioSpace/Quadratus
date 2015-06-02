@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.IO;
 
+using System.Runtime.Serialization.Formatters.Binary;
 
 using STAR;
 
@@ -24,8 +25,6 @@ namespace TileMapMaker
 {
     public partial class MainWindow : Window
     {
-
-
 
         void SetCommandBindings()
         {
@@ -57,7 +56,7 @@ namespace TileMapMaker
             CommandBindings.Add(
                 new CommandBinding(
                     Commands.MapEditCommands.ChangeTexture,
-                    TextureChangeOperation,
+                    ChangeTextureOperation,
                     (sender, args) => { args.CanExecute = App.ProjectState != ProjectState.Empty; ; }
                 ));
 
@@ -81,40 +80,41 @@ namespace TileMapMaker
                  new CommandBinding(
                     Commands.MapEditCommands.Createmap,
                     CreateMapOperation,
-                    (Sender, args) => { args.CanExecute = false; }
+                    (Sender, args) => { args.CanExecute = App.ProjectState != ProjectState.Empty; }
                  ));
             CommandBindings.Add(
                  new CommandBinding(
                     Commands.MapEditCommands.ImportMap,
                     ImportMapOperation,
-                    (Sender, args) => { args.CanExecute = false; }
+                    (Sender, args) => { args.CanExecute = App.ProjectState != ProjectState.Empty; }
                  ));
             CommandBindings.Add(
                  new CommandBinding(
                     Commands.MapEditCommands.RemoveMap,
                     RemoveMapOperation,
-                    (Sender, args) => { args.CanExecute = false; }
+                    (Sender, args) => { args.CanExecute = App.ProjectState != ProjectState.Empty && MapListBox.SelectedIndex > -1; }
                  ));
             CommandBindings.Add(
                  new CommandBinding(
                     Commands.MapEditCommands.ExportMap,
                     ExportMapOperation,
-                    (Sender, args) => { args.CanExecute = false; }
+                    (Sender, args) => { args.CanExecute = App.ProjectState != ProjectState.Empty && MapListBox.SelectedIndex > -1; }
                  ));
             CommandBindings.Add(
                  new CommandBinding(
                     Commands.MapEditCommands.ClearProject,
                     ClearProjectOperation,
-                    (Sender, args) => { args.CanExecute = false; }
+                    (Sender, args) => { args.CanExecute = App.ProjectState != ProjectState.Empty; }
                  ));
 
             CommandBindings.Add(
                  new CommandBinding(
                     Commands.MapEditCommands.SelectMap,
                     SelectMapOperation,
-                    (Sender, args) => { args.CanExecute = false; }
+                    (Sender, args) => { args.CanExecute =  App.ProjectState != ProjectState.Empty && MapListBox.SelectedIndex > -1; }
                  ));
         }
+
 
         private void SelectMapOperation(object sender, ExecutedRoutedEventArgs e)
         {
@@ -139,6 +139,8 @@ namespace TileMapMaker
                 {
                     Controls.TextureEditor te = (Controls.TextureEditor)EditorControl.Children[0];
                     te.Reset();
+
+
                 }
             }
             
@@ -216,130 +218,38 @@ namespace TileMapMaker
 
         private void ExportMapOperation(object sender, ExecutedRoutedEventArgs e)
         {
-            
-            MessageBox.Show("ExportMap");
-        }
-
-        private void RemoveMapOperation(object sender, ExecutedRoutedEventArgs e)
-        {
-            MessageBox.Show("RemoveMap");
-        }
-
-        private void ImportMapOperation(object sender, ExecutedRoutedEventArgs e)
-        {
-            MessageBox.Show("ImportMap");
-        }
-
-        private void CreateMapOperation(object sender, ExecutedRoutedEventArgs e)
-        {
-            MessageBox.Show("CreateMap");
-        }
-
-
-
-        void ApplicationNewOperation(object sender, ExecutedRoutedEventArgs e)
-        {
-
-            Dialogs.NewMapDialog nmd = new Dialogs.NewMapDialog();
-            if (nmd.ShowDialog() ?? false)
-            {
-                shell.PauseGameToggle();
-
-                shell.ClearProject();
-
-
-                GameMap map = new GameMap(nmd.NewMapCmpPath, nmd.NewMapWidth, nmd.NewMapHeight);
-                bool maploaded = false;
-
-               
-                string newmapname = Guid.NewGuid().ToString("N");
-                maploaded = shell.UploadMap(newmapname, map);
-                shell.SelectMap(newmapname);
-
-                shell.PauseGameToggle();
-
-
-                if (maploaded)
-                {
-                    TextureDataCollection tdc;
-                    try { tdc = TextureDataCollection.ReadCollection(map.GetCMPPath()); }
-                    catch { tdc = new TextureDataCollection(); }
-
-                    foreach (TextureData td in tdc)
-                    {
-                        texturedata.Add(td);
-                    }
-
-                    bi = new BitmapImage(new Uri(map.getPNGPath()));
-
-                    texsize = new SharpDX.Size2((int)(bi.PixelWidth * tdc.CellUnit.u), (int)(bi.PixelHeight * tdc.CellUnit.v));
-                }
-                else MessageBox.Show("could not load map"); maploaded = false; 
-
-                
-
-                App.ProjectState = ProjectState.Saved;
-            }
-
-        }
-
-        void TextureChangeOperation(object sender,ExecutedRoutedEventArgs args )
-        {
-            EditorControl.Children.Clear();
-            
-
-            EditorControl.Children.Add(new Controls.TextureEditor(texturedata.ToArray(), bi, texsize));
-
-
-            //set the command mode of the game shell
-            comMode = Commands.MapCommandMode.ChangeTexture;
-
-           
-           
-        }
-
-        void ApplicationSaveOperation(object Sender,ExecutedRoutedEventArgs args)
-        {
-            //save the game
+            //save the gamemap
 
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Save Map";
             sfd.Filter = "Game Map|*.gmap";
             sfd.DefaultExt = ".gmap";
-            
+
             if (sfd.ShowDialog() ?? false)
             {
-                File.WriteAllBytes(sfd.FileName,shell.SaveMap());             
+                File.WriteAllBytes(sfd.FileName, shell.SaveMap());
 
             }
-            
-            
+
+
             MessageBox.Show("Map Saved");
 
 
             App.ProjectState = ProjectState.Saved;
         }
 
-        void ChangePositionOperation(object Sender, ExecutedRoutedEventArgs args)
+        private void RemoveMapOperation(object sender, ExecutedRoutedEventArgs e)
         {
-            EditorControl.Children.Clear();
-            EditorControl.Children.Add(new Controls.PositionEditor());
+            shell.PauseGameToggle();
 
-            comMode = Commands.MapCommandMode.ChangePosition;
+            shell.RemoveSelectedMap();
+            FillNames();
+
+            shell.PauseGameToggle();
+
         }
 
-        void ChangeSizeOperation(object Sender, ExecutedRoutedEventArgs args)
-        {
-
-            EditorControl.Children.Clear();
-            EditorControl.Children.Add(new Controls.ColorEditor());
-
-            comMode = Commands.MapCommandMode.ChangeColor;
-
-            
-        }
-
-        void ApplicationOpenOperation(object sender, ExecutedRoutedEventArgs args)
+        private void ImportMapOperation(object sender, ExecutedRoutedEventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "Game Map|*.gmap";
@@ -364,7 +274,7 @@ namespace TileMapMaker
 
                         string newmapname = Guid.NewGuid().ToString("N");
                         GameMap map = (GameMap)new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Deserialize(ms);
-                        bool maploaded = shell.UploadMap(newmapname,map);
+                        bool maploaded = shell.UploadMap(newmapname, map);
 
                         shell.SelectMap(newmapname);
 
@@ -372,9 +282,9 @@ namespace TileMapMaker
 
                         if (maploaded)
                         {
-                            
+
                         }
-                        else MessageBox.Show("could not load map"); maploaded = false; 
+                        else MessageBox.Show("could not load map"); maploaded = false;
 
 
                         App.ProjectState = ProjectState.Saved;
@@ -387,9 +297,245 @@ namespace TileMapMaker
                 }
             }
 
-
-            
+            FillNames();
         }
 
+        private void CreateMapOperation(object sender, ExecutedRoutedEventArgs e)
+        {
+            Dialogs.NewMapDialog nmd = new Dialogs.NewMapDialog();
+            if (nmd.ShowDialog() ?? false)
+            {
+                shell.PauseGameToggle();              
+
+
+                GameMap map = new GameMap(nmd.NewMapCmpPath, nmd.NewMapWidth, nmd.NewMapHeight);
+                bool maploaded = false;
+
+
+                string newmapname = Guid.NewGuid().ToString("N");
+                maploaded = shell.UploadMap(newmapname, map);
+                shell.SelectMap(newmapname);
+
+                shell.PauseGameToggle();
+
+
+                if (maploaded)
+                {
+                    TextureDataCollection tdc;
+                    try { tdc = TextureDataCollection.ReadCollection(map.GetCMPPath()); }
+                    catch { tdc = new TextureDataCollection(); }
+
+                    foreach (TextureData td in tdc)
+                    {
+                        texturedata.Add(td);
+                    }
+
+                    bi = new BitmapImage(new Uri(map.getPNGPath()));
+
+                    texsize = new SharpDX.Size2((int)(bi.PixelWidth * tdc.CellUnit.u), (int)(bi.PixelHeight * tdc.CellUnit.v));
+                }
+                else MessageBox.Show("could not load map"); maploaded = false;
+
+
+
+                App.ProjectState = ProjectState.Saved;
+            }
+
+            FillNames();
+        }
+        
+
+
+        void ApplicationNewOperation(object sender, ExecutedRoutedEventArgs e)
+        {
+
+            //new project 
+
+          
+
+            Dialogs.InitializeProjectDialog ipd = new Dialogs.InitializeProjectDialog();
+            if (ipd.ShowDialog() ?? false)
+            {
+                shell.PauseGameToggle();
+                shell.ClearProject();
+
+                
+
+                switch (ipd.initializeProjectDialogResult)
+                { 
+                    case  Dialogs.InitializeProjectDialogResult.ImportMap:
+                        OpenFileDialog ofd = new OpenFileDialog();
+                        ofd.Filter = "Game Map|*.gmap";
+                        ofd.Title = "find a map to load";
+                        ofd.Multiselect = false;
+                        ofd.DefaultExt = ".gmap";
+                        ofd.CheckFileExists = true;
+                        ofd.CheckPathExists = true;
+                        ofd.AddExtension = true;
+
+
+
+                        if (ofd.ShowDialog() ?? false)
+                        {
+                            using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(ofd.FileName)))
+                            {
+                                try
+                                {
+                                    string newmapname = Guid.NewGuid().ToString("N");
+                                    GameMap map = (GameMap)new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Deserialize(ms);
+                                    bool maploaded = shell.UploadMap(newmapname, map);
+
+                                    shell.SelectMap(newmapname);
+
+
+
+                                    if (maploaded)
+                                    {
+
+                                    }
+                                    else MessageBox.Show("could not load map"); maploaded = false;
+
+
+                                    App.ProjectState = ProjectState.Saved;
+                                }
+                                catch (Exception EX)
+                                {
+                                    MessageBox.Show("could not open map : " + EX.Message);
+
+                                }
+                            }
+                        }
+                         
+                        break;
+
+                    case Dialogs.InitializeProjectDialogResult.NewMap:
+                        Dialogs.NewMapDialog nmd = new Dialogs.NewMapDialog();
+                         if (nmd.ShowDialog() ?? false)
+                         {
+                             
+
+
+                             GameMap map = new GameMap(nmd.NewMapCmpPath, nmd.NewMapWidth, nmd.NewMapHeight);
+                             bool maploaded = false;
+
+
+                             string newmapname = Guid.NewGuid().ToString("N");
+                             maploaded = shell.UploadMap(newmapname, map);
+                             shell.SelectMap(newmapname);
+
+                            
+                         }
+                        break;
+
+                    case Dialogs.InitializeProjectDialogResult.None:
+
+                    default:
+                        break;
+                }
+            }
+
+
+
+
+
+            shell.PauseGameToggle();
+
+            FillNames();
+
+            App.ProjectState = ProjectState.Saved;
+
+        }
+
+        void ApplicationOpenOperation(object sender, ExecutedRoutedEventArgs args)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Open a Game Project";
+            ofd.DefaultExt = ".gpro";
+            ofd.Filter = "Game Project|*.gpro";
+            ofd.Multiselect = false;
+            ofd.CheckFileExists = true;
+            ofd.CheckPathExists = true;
+            
+
+            if(ofd.ShowDialog() ?? false)
+            {
+                shell.PauseGameToggle();
+                shell.ClearProject();
+
+                try
+                {
+                    using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(ofd.FileName)))
+                    {
+                        shell.SetGameProject((GameProject)new BinaryFormatter().Deserialize(ms));
+                    }
+                }
+                catch (Exception EX) { MessageBox.Show("could not load project because " + EX.Message + "\r\nFailed At:\r\n" + EX.StackTrace); }
+
+                FillNames();
+
+                shell.PauseGameToggle();
+
+                App.ProjectState = ProjectState.Saved;
+                comMode = Commands.MapCommandMode.None;
+            }
+
+
+            //
+            
+            
+            
+
+        }        
+
+        void ApplicationSaveOperation(object Sender,ExecutedRoutedEventArgs args)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Title = "Save your project";
+            sfd.Filter = "Game Project|*.gpro";
+            sfd.CheckFileExists = false;
+            sfd.CheckPathExists = true;
+            sfd.DefaultExt = ".gpro";
+
+            if (sfd.ShowDialog() ?? false)
+            {
+                File.WriteAllBytes(sfd.FileName, shell.SaveProject());
+            }
+        }       
+        
+
+
+        void ChangePositionOperation(object Sender, ExecutedRoutedEventArgs args)
+        {
+            EditorControl.Children.Clear();
+            EditorControl.Children.Add(new Controls.PositionEditor());
+
+            comMode = Commands.MapCommandMode.ChangePosition;
+        }        
+
+        void ChangeSizeOperation(object Sender, ExecutedRoutedEventArgs args)
+        {
+
+            EditorControl.Children.Clear();
+            EditorControl.Children.Add(new Controls.ColorEditor());
+
+            comMode = Commands.MapCommandMode.ChangeColor;
+
+
+        }
+
+        void ChangeTextureOperation(object sender, ExecutedRoutedEventArgs args)
+        {
+            EditorControl.Children.Clear();
+
+
+            EditorControl.Children.Add(new Controls.TextureEditor(texturedata.ToArray(), bi, texsize));
+
+
+            //set the command mode of the game shell
+            comMode = Commands.MapCommandMode.ChangeTexture;
+
+
+
+        }
     }
 }

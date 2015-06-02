@@ -34,7 +34,8 @@ namespace TileMapMaker
         
         BitmapImage bi;
         SharpDX.Size2 texsize;
-        string currentMap;
+        
+        ObservableCollection<string> mapnames;
 
         ObservableCollection<TextureData> texturedata;
 
@@ -48,6 +49,9 @@ namespace TileMapMaker
             cellProps = new ContextMenu();
 
             texturedata = new ObservableCollection<TextureData>();
+            mapnames = new ObservableCollection<string>();
+
+            MapListBox.DataContext = mapnames;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -55,7 +59,7 @@ namespace TileMapMaker
 
             GameProject project = new GameProject();
             project.AddMap("default",new GameMap("dev1.cmp",1,1));
-            currentMap = "default";
+            
             
             shell = new GameShell(project, true);
             shell.SelectMap("default");
@@ -65,15 +69,28 @@ namespace TileMapMaker
             shell.AllowTransparency = true;
             shell.GameClick += shell_GameClick;
             shell.GameMouseMove += shell_GameMouseMove;
-            
+
+            FillNames();
+
 
             WinHost.Child = shell;
 
+            
 
             App.ProjectState = ProjectState.Empty;
 
 
             SetCommandBindings();//from Commands\MainWindowBindings.cs
+        }
+
+        private void FillNames()
+        {
+            mapnames.Clear();
+
+            foreach (string n in shell.GetMapNames())
+            {
+                mapnames.Add(n);
+            }
         }
 
         private void shell_GameMouseMove(object sender, GameShellMouseEventArgs e)

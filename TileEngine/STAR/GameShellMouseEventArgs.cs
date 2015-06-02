@@ -25,14 +25,14 @@ namespace STAR
 
 
         Surface? surfaceForGame;
-        internal Surface? SurfaceForgame { get { return surfaceForGame; } }
+        internal Surface? SurfaceForGame { get { return surfaceForGame; } }
 
         bool isSurfaceSet = false;
         public bool IsSurfaceSet { get { return isSurfaceSet; } }
         /// <summary>
-        /// 
+        /// replace the existing surface with the one provided
         /// </summary>
-        /// <param name="surface"></param>
+        /// <param name="surface">the surface to replace the game surface with</param>
         public void SetGameSurface(Surface surface)
         {
             if (!isSurfaceSet)

@@ -273,7 +273,7 @@ namespace STAR
                     if (EditGameMode)
                     {
 
-                        pmap.UpdateGraphics(d, NewLook);
+                        pmap.UpdateGraphics(d);
 
                     }
 
@@ -408,7 +408,7 @@ namespace STAR
 
                     if (args.IsSurfaceSet && currentmap != null)
                     {
-                        project[CurrentMap].For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
+                        project[CurrentMap].For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForGame ?? sur); });
                         SurfaceChange = true;
                     }
                 }
@@ -431,7 +431,7 @@ namespace STAR
 
                         if (args.IsSurfaceSet && currentmap != null)
                         {
-                            project[CurrentMap].For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForgame ?? sur); });
+                            project[CurrentMap].For((int)args.cellpos.X, (int)args.cellpos.Y, 1, 1, (ref Surface sur, int u, int v) => { sur = (Surface)(args.SurfaceForGame ?? sur); });
                             SurfaceChange = true;
                         }
                     }
@@ -462,6 +462,30 @@ namespace STAR
 
         }
 
+        public byte[] SaveProject()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            lock (locker)
+            {
+                new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(ms, project);
+            }
+
+            ms.Close();
+
+            return ms.ToArray();
+        }
+
+        public void RemoveSelectedMap()
+        {
+            lock (locker)
+            {
+                project.RemoveMap(currentmap);
+            }
+
+            currentmap = "";
+        }
+
         /// <summary>
         /// Uploads a map into the game in edit mode
         /// </summary>
@@ -479,6 +503,8 @@ namespace STAR
 
                 lastcellover = new SharpDX.Vector2();
                 
+                
+
                 result = true;
 
                 
@@ -500,18 +526,36 @@ namespace STAR
 
         public GameMap SelectMap(string name)
         {
-            if (mapnames.Contains(name) && Paused)
+            if (mapnames.Contains(name))
             {
                 CurrentMap = name;
-                return project[name];
+                lock (locker) { return project[name]; }
             }
             else {return null; }
 
+        }
+        public GameProject GetGameProject()
+        {
+            lock (locker) { return project; }
+        }
+
+        public void SetGameProject(GameProject p)
+        { 
+            lock(locker)
+            {
+                project.Dispose();
+
+                project = p;
+            }
         }
 
         public void PauseGameToggle()
         {
             Paused = !Paused;
+        }
+        public string[] GetMapNames()
+        {
+            return project.GetKeys();
         }
 
         GameShellMouseEventArgs GenerateGameShellMouseEventArgs(MouseEventArgs e)
