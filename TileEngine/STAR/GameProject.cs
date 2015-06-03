@@ -78,7 +78,7 @@ namespace STAR
             {
                 foreach (string name in maps.Keys)
                 {
-                    maps[name].UpdateGraphics(d, gpos);
+                    maps[name].UpdateGraphics(d);
                 }
             }
         }

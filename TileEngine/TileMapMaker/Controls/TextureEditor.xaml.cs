@@ -29,7 +29,7 @@ namespace TileMapMaker.Controls
         /// <summary>
         /// gets the index selected in the list
         /// </summary>
-        public int SelectedIndex { get { try { return ((TextureData)TextureList.SelectedItem).Index; } catch { return -1; } } }
+        public int SelectedIndex { get { return TextureList.SelectedItem is TextureData ? ((TextureData)TextureList.SelectedItem).Index:-1; } }
 
 
 
@@ -39,6 +39,9 @@ namespace TileMapMaker.Controls
             
             spritesheet = sheet;
             texsize = ts;
+
+            texturedata = new ObservableCollection<TextureData>();
+
 
             foreach(TextureData td in data)
             {

@@ -102,14 +102,11 @@ namespace STAR
         Buffer Arg;
 
         [NonSerialized]
-        Vector3 basepos;
+        Vector3 newlook;
+        public Vector3 Newlook { get { return newlook; } set { newlook = value; } }
 
-        //  //////////////////////////////////////////
         [NonSerialized]
-        public Vector3 newlook;
-         
-        //   ////////////////////////////////////////
-
+        Vector3 basepos;
 
         [NonSerialized]
         TextureDataCollection tdc;
@@ -184,12 +181,12 @@ namespace STAR
         public void InitializeGraphics(Device d,int ClientWidth , int ClientHeight)
         {
             #region data
-            changed = false;
+            
 
             tdc = TextureDataCollection.ReadCollection(texturedatapath);   
             Vector2[] textureData = tdc.GetTexCoords();
 
-            
+
             basepos = new SharpDX.Vector3(
                 (-ClientWidth / 2) + (cellsize / 2),
                 (-ClientHeight / 2) + (cellsize / 2),
@@ -276,7 +273,7 @@ namespace STAR
             VArgs varg = new VArgs() 
             {
                 cs = cellsize/2,
-                glbTrans =  basepos - NewLook,
+                glbTrans =  basepos - newlook,
                 texcrdbase = tdc.CellUnit,
                 world = w//yeah, i know          
             };

@@ -58,14 +58,11 @@ namespace STAR
         CancellationTokenSource RenderingCancel;
 
         int old_X;
-        int old_y;
+        int old_Y;
 
         int ms_z;
 
-        SharpDX.Vector3 newlook;
-        SharpDX.Vector3 NewLook { get { lock (locker) { return newlook; } } set { lock (locker) { newlook = value; } } }
         
-
         /// <summary>
         /// the cell coords of the last cell the mouse was over
         /// </summary>
@@ -248,9 +245,7 @@ namespace STAR
                     Thread.Sleep(100);
                 }
                 
-
-
-
+                
 
                 lastcellover = new SharpDX.Vector2();
           
@@ -328,8 +323,8 @@ namespace STAR
                     if (firstcatch)
                     {
 
-                        old_X = (int)NewLook.X + e.X;
-                        old_y = (int)NewLook.Y + e.Y;
+                        old_X = (int)project[currentmap].Newlook.X + e.X;
+                        old_Y = (int)project[currentmap].Newlook.Y + e.Y;
                         firstcatch = false;
 
                     }
@@ -348,7 +343,7 @@ namespace STAR
                     {//this is the else for the onmousedown method
                         lock (GameShell.locker)
                         {
-                            NewLook = new SharpDX.Vector3(old_X - e.X, old_y - e.Y, ms_z);
+                            project[currentmap].Newlook = new SharpDX.Vector3(old_X - e.X,old_Y - e.Y, ms_z);
 
                             SurfaceChange = true;
 
@@ -371,8 +366,8 @@ namespace STAR
                 {
                     firstcatch = true;
 
-                    old_X = (int)NewLook.X;
-                    old_y = (int)NewLook.Y;
+                    old_X = (int)project[currentmap].Newlook.X;
+                    old_Y = (int)project[currentmap].Newlook.Y;
                 }
             }
 
@@ -498,15 +493,17 @@ namespace STAR
             {
                 m.InitializeGraphics(d,ClientSize.Width,ClientSize.Height);
 
-                project.AddMap(name, m);
-                mapnames = project.GetKeys();               
+                if (project.AddMap(name, m))
+                {
+                    mapnames = project.GetKeys();
 
-                lastcellover = new SharpDX.Vector2();
-                
-                
+                    lastcellover = new SharpDX.Vector2();
 
-                result = true;
 
+
+                    result = true;
+                }
+                ;
                 
             }
 
@@ -567,8 +564,8 @@ namespace STAR
             if (currentmap != null)
             {
 
-                int x = (int)(p.X + NewLook.X) / project[CurrentMap].cellSize;
-                int y = (int)(p.Y + NewLook.Y) / project[CurrentMap].cellSize;
+                int x = (int)(p.X + project[currentmap].Newlook.X) / project[CurrentMap].cellSize;
+                int y = (int)(p.Y + project[currentmap].Newlook.Y) / project[CurrentMap].cellSize;
 
 
 
